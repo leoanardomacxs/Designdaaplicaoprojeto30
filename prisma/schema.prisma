@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./../database/database.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin") // Todos os cuidadores entram como admin por padrão
+  createdAt DateTime @default(now())
+  patients  Patient[]
+}
+
+model Patient {
+  id        String   @id @default(cuid())
+  name      String
+  age       Int
+  status    String   @default("Active")
+  condition String?  // 👈 ADICIONADO: Agora o banco aceita a patologia/quadro clínico
+  ownerId   String
+  createdAt DateTime @default(now())
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  records   Record[]
+}
+
+model Record {
+  id                    String   @id @default(cuid())
+  patientId             String
+  createdAt             DateTime @default(now())
+  patient               Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  // 1. SINAIS VITAIS
+  systolic              Int?     // Pressão Sistólica
+  diastolic             Int?     // Pressão Diastólica
+  glucose               Int?     // Glicemia
+  heart_rate            Int?     // Batimentos (Frequência Cardíaca)
+  oxygen                Int?     // Saturação de Oxigênio
+  temperature           Float?   // Temperatura corporal
+
+  // 2. ESTADO FÍSICO GERAL
+  weight                Float?   // Peso
+  pain_level            Int?     // Nível de dor (0 a 10)
+  pain_location         String?  // Local da dor
+  fatigue               Boolean  @default(false) // Cansaço/fadiga fora do normal
+  dizziness             Boolean  @default(false) // Tontura ou fraqueza
+  edema                 Boolean  @default(false) // Inchaço em pernas ou pés
+
+  // 3. MOBILIDADE E SEGURANÇA
+  mobility              String   @default("Independente") // Independente, Precisa de Ajuda, Acamado
+  recent_falls          Boolean  @default(false)          // Quedas recentes ou quase quedas
+  difficulty_standing   Boolean  @default(false)          // Dificuldade para levantar/sentar
+  support_equipment     String?  // Uso de apoio (bengala, andador, nenhum)
+
+  // 4. ESTADO MENTAL E NEUROLÓGICO
+  oriented              Boolean  @default(true)  // Está orientado (sabe onde está e o dia)
+  mental_confusion      Boolean  @default(false) // Confusão mental ou esquecimentos
+  excessive_sleepiness  Boolean  @default(false) // Sonolência excessiva ou agitação
+  speech_alteration     Boolean  @default(false) // Alterações de fala ou fraqueza repentina
+
+  // 5. ALIMENTAÇÃO E HIDRATAÇÃO
+  appetite              String   @default("Normal") // Normal / Reduzido / Ausente
+  food_intake           String   @default("Total")  // Total / Parcial / Pouco
+  water_intake          String   @default("Adequada") // Baixa / Adequada
+  difficulty_swallowing Boolean  @default(false)      // Dificuldade para engolir
+
+  // 6. ELIMINAÇÃO
+  urine                 String   @default("Normal") // Normal / Alterada (dor, cor estranha, pouca)
+  feces                 String   @default("Normal") // Normal / Prisão de ventre / Diarreia
+  incontinence          String   @default("Nenhuma") // Nenhuma / Urinária / Fecal / Ambas
+
+  // 7. HUMOR E BEM-ESTAR BÁSICO
+  mood                  String   @default("Estável") // Estável / Triste / Irritado / Apático
+  activity_interest     Boolean  @default(true)     // Interesse nas atividades do dia
+  sleep_quality         String   @default("Normal") // Normal / Muito alterado
+
+  notes                 String?  // Observações gerais adicionais
+}

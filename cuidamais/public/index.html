@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CuidaMais</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="logo">
+             CuidaMais
+        </div>
+
+        <div class="subtitle">
+            Monitoramento diário da saúde do paciente
+        </div>
+    </header>
+
+    <section class="dashboard">
+
+        <div class="stat-card">
+            <h3>Total de Registros</h3>
+            <span id="totalRegistros">0</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Última Pressão</h3>
+            <span id="ultimaPressao">-</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Última Glicemia</h3>
+            <span id="ultimaGlicemia">-</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Última Temperatura</h3>
+            <span id="ultimaTemperatura">-</span>
+        </div>
+
+    </section>
+
+    <main class="container">
+
+        <section class="card">
+
+            <h2>Novo Registro</h2>
+
+            <form id="formRegistro">
+
+                <div class="grid">
+
+                    <div class="campo">
+                        <label>Paciente</label>
+                        <input
+                            type="text"
+                            id="nomePaciente"
+                            placeholder="Nome do paciente"
+                            required>
+                    </div>
+
+                    <div class="campo">
+                        <label>Data</label>
+                        <input
+                            type="date"
+                            id="dataRegistro"
+                            required>
+                    </div>
+
+                    <div class="campo">
+                        <label>Pressão Arterial</label>
+                        <input
+                            type="text"
+                            id="pressaoArterial"
+                            placeholder="120/80"
+                            required>
+                    </div>
+
+                    <div class="campo">
+                        <label>Glicemia</label>
+                        <input
+                            type="number"
+                            id="glicemia"
+                            placeholder="Ex: 90">
+                    </div>
+
+                    <div class="campo">
+                        <label>Temperatura</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            id="temperatura"
+                            placeholder="36.5">
+                    </div>
+
+                    <div class="campo">
+                        <label>Humor</label>
+                        <input
+                            type="text"
+                            id="humor"
+                            placeholder="Feliz">
+                    </div>
+
+                </div>
+
+                <div class="campo">
+                    <label>Observações</label>
+                    <textarea
+                        id="observacoes"
+                        rows="4"
+                        placeholder="Observações importantes"></textarea>
+                </div>
+
+                <button class="btn-salvar" type="submit">
+                    Salvar Registro
+                </button>
+
+            </form>
+
+        </section>
+
+        <section class="card">
+
+            <section class="card">
+
+                <h2>Gráfico de Tendência</h2>
+
+                <canvas id="graficoSaude"></canvas>
+
+            </section>
+
+            <h2>Registros Cadastrados</h2>
+
+            <button
+                type="button"
+                id="btnPdf"
+            >
+                Gerar PDF
+            </button>
+
+            <div class="tabela-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Data</th>
+                            <th>Pressão</th>
+                            <th>Glicemia</th>
+                            <th>Temperatura</th>
+                            <th>Humor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="listaRegistros">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/script.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <script src="js/script.js"></script>
+
+</body>
+</html>

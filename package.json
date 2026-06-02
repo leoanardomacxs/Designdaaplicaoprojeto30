@@ -1,0 +1,53 @@
+{
+  "name": "designdaaplicaoprojeto30",
+  "version": "1.0.0",
+  "description": "Design da aplicação Projeto 30",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leoanardomacxs/Designdaaplicaoprojeto30.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/leoanardomacxs/Designdaaplicaoprojeto30/issues"
+  },
+  "homepage": "https://github.com/leoanardomacxs/Designdaaplicaoprojeto30#readme",
+  "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.11",
+    "@tailwindcss/postcss": "^4.3.0",
+    "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.7",
+    "jose": "^6.2.3",
+    "lucide-react": "^1.17.0",
+    "next": "^16.2.7",
+    "next-auth": "^4.24.14",
+    "postcss": "^8.5.15",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "recharts": "^3.8.1",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.19.3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "25.9.1",
+    "@types/react": "^19.2.16",
+    "@types/react-dom": "^19.2.3",
+    "prisma": "^6.19.3",
+    "typescript": "^6.0.3"
+  }
+}
