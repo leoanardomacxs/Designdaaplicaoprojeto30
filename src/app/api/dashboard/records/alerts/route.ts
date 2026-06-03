@@ -5,13 +5,25 @@ import { requireSession } from "@/lib/auth";
 export async function GET(req: NextRequest) {
   try {
     const session = await requireSession();
+    
+    // 1. Captura o ID do paciente que vem da URL
+    const { searchParams } = new URL(req.url);
+    const patientId = searchParams.get("patientId");
 
+    if (!patientId) {
+      return NextResponse.json({ error: "ID do paciente não informado." }, { status: 400 });
+    }
+
+    // 2. Busca o paciente específico garantindo que ele pertence ao usuário logado
     const patient = await prisma.patient.findFirst({
-      where: { ownerId: session.userId },
+      where: { 
+        id: patientId,
+        ownerId: session.userId 
+      },
     });
 
     if (!patient) {
-      return NextResponse.json([], { status: 200 });
+      return NextResponse.json({ error: "Paciente não encontrado." }, { status: 404 });
     }
 
     // Pega o registro mais recente para triagem
