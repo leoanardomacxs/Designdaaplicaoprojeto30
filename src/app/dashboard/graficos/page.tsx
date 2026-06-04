@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { TrendingUp, Activity, HeartPulse, Droplets, Thermometer, Users, Loader2 } from "lucide-react";
-// 1. Importa o hook do contexto de pacientes que você gerencia no app
+
 import { usePatient } from "@/context/PatientContext"; 
 
 export default function GraficosPage() {
@@ -12,29 +12,29 @@ export default function GraficosPage() {
   const [error, setError] = useState("");
   const [hasMounted, setHasMounted] = useState(false);
 
-  // Estado para capturar a largura real da tela e fazer o gráfico ser responsivo de verdade
+  
   const [chartWidth, setChartWidth] = useState(500);
 
-  // 2. Acessa o idoso que está ativado no momento
+  
   const { selectedPatient } = usePatient();
 
-  // Monitora o tamanho da tela para recalcular os gráficos sem precisar do ResponsiveContainer fujão
+  
   useEffect(() => {
     setHasMounted(true);
     
     const handleResize = () => {
-      // Pega a largura do container ou calcula baseado na janela do navegador
+      
       const width = window.innerWidth;
       if (width < 640) {
-        setChartWidth(width - 48); // Telas mobile
+        setChartWidth(width - 48); 
       } else if (width < 1024) {
-        setChartWidth(width - 80); // Tablets
+        setChartWidth(width - 80); 
       } else {
-        setChartWidth(520); // Grid de 2 colunas no Desktop
+        setChartWidth(520); 
       }
     };
 
-    handleResize(); // Executa ao montar a página
+    handleResize(); 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);

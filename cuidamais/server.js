@@ -6,28 +6,28 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = 3000;
 
-// Configurações e Middlewares
-app.use(cors()); // Libera o acesso para o Lovable não dar erro de segurança
+
+app.use(cors()); 
 app.use(express.json());
 app.use(express.static("public"));
 
-// ==========================================
-// 1. ROTAS DE AUTENTICAÇÃO (User)
-// ==========================================
 
-// Cadastro de usuário
+
+
+
+
 app.post("/api/auth/register", async (req, res) => {
     try {
         const { email, password, name } = req.body;
         
-        // Verifica se o usuário já existe
+        
         const userExists = await prisma.user.findUnique({ where: { email } });
         if (userExists) {
             return res.status(400).json({ error: "E-mail já cadastrado." });
         }
 
         const newUser = await prisma.user.create({
-            data: { email, password, name } // Nota: Em produção, o ideal é usar bcrypt para a senha
+            data: { email, password, name } 
         });
 
         res.status(201).json({ id: newUser.id, name: newUser.name, email: newUser.email });
@@ -36,7 +36,7 @@ app.post("/api/auth/register", async (req, res) => {
     }
 });
 
-// Login de usuário
+
 app.post("/api/auth/login", async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -53,11 +53,11 @@ app.post("/api/auth/login", async (req, res) => {
 });
 
 
-// ==========================================
-// 2. ROTAS DE PACIENTES (Patient)
-// ==========================================
 
-// Criar Paciente
+
+
+
+
 app.post("/api/patients", async (req, res) => {
     try {
         const { name, age, phone, condition } = req.body;
@@ -70,7 +70,7 @@ app.post("/api/patients", async (req, res) => {
     }
 });
 
-// Listar Pacientes
+
 app.get("/api/patients", async (req, res) => {
     try {
         const patients = await prisma.patient.findMany({
@@ -82,7 +82,7 @@ app.get("/api/patients", async (req, res) => {
     }
 });
 
-// Deletar Paciente
+
 app.delete("/api/patients/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -96,11 +96,11 @@ app.delete("/api/patients/:id", async (req, res) => {
 });
 
 
-// ==========================================
-// 3. ROTAS DE PRONTUÁRIOS (Record)
-// ==========================================
 
-// Criar Prontuário/Registro
+
+
+
+
 app.post("/api/records", async (req, res) => {
     try {
         const {
@@ -134,11 +134,11 @@ app.post("/api/records", async (req, res) => {
     }
 });
 
-// Listar todos os Prontuários (com os dados do Paciente inclusos)
+
 app.get("/api/records", async (req, res) => {
     try {
         const records = await prisma.record.findMany({
-            include: { patient: true }, // Traz junto as informações do paciente vinculado
+            include: { patient: true }, 
             orderBy: { id: "desc" }
         });
         res.json(records);
@@ -147,7 +147,7 @@ app.get("/api/records", async (req, res) => {
     }
 });
 
-// Atualizar Prontuário
+
 app.put("/api/records/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -178,7 +178,7 @@ app.put("/api/records/:id", async (req, res) => {
     }
 });
 
-// Deletar Prontuário
+
 app.delete("/api/records/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -191,7 +191,7 @@ app.delete("/api/records/:id", async (req, res) => {
     }
 });
 
-// Inicialização do Servidor
+
 app.listen(PORT, () => {
-    console.log(`Servidor moderno rodando em http://localhost:${PORT}`);
+    console.log(`Servidor moderno rodando em http:
 });

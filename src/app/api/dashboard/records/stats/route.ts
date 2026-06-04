@@ -14,14 +14,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json([], { status: 200 });
     }
 
-    // Pega os últimos 15 registros em ordem cronológica (p/ o gráfico fazer sentido da esquerda p/ direita)
+    
     const records = await prisma.record.findMany({
       where: { patientId: patient.id },
       orderBy: { createdAt: "asc" },
       take: 15,
     });
 
-    // Formata os dados limpando o que for nulo para o gráfico não quebrar
+    
     const formattedData = records.map((r) => ({
       data: new Date(r.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
       systolic: r.systolic,

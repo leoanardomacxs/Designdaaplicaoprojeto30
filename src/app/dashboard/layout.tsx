@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { PatientProvider, usePatient } from "@/context/PatientContext"; 
 
-// Subcomponente interno para a estrutura visual do painel.
+
 function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -120,7 +120,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-// O export default envelopa o conteúdo global com o PatientProvider
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <PatientProvider>

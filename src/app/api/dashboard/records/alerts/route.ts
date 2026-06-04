@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const session = await requireSession();
     
-    // 1. Captura o ID do paciente que vem da URL
+    
     const { searchParams } = new URL(req.url);
     const patientId = searchParams.get("patientId");
 
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "ID do paciente não informado." }, { status: 400 });
     }
 
-    // 2. Busca o paciente específico garantindo que ele pertence ao usuário logado
+    
     const patient = await prisma.patient.findFirst({
       where: { 
         id: patientId,
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Paciente não encontrado." }, { status: 404 });
     }
 
-    // Pega o registro mais recente para triagem
+    
     const latest = await prisma.record.findFirst({
       where: { patientId: patient.id },
       orderBy: { createdAt: "desc" },
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
     const alerts = [];
 
-    // 1. Triagem de Pressão Arterial
+    
     if (latest.systolic && latest.systolic >= 140) {
       alerts.push({
         id: "pa_alta",
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 2. Triagem de Glicemia
+    
     if (latest.glucose && latest.glucose >= 180) {
       alerts.push({
         id: "glicemia_alta",
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 3. Triagem de Temperatura
+    
     if (latest.temperature && latest.temperature >= 37.8) {
       alerts.push({
         id: "febre",
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 4. Triagem de Saturação de Oxigênio
+    
     if (latest.oxygen && latest.oxygen < 94) {
       alerts.push({
         id: "oxigenio_baixo",
@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 5. Triagem de Eventos Críticos (Quedas / Confusão)
+    
     if (latest.recent_falls) {
       alerts.push({
         id: "queda_recente",

@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const session = await requireSession();
 
-    // Encontra o paciente da Verenice atrelado ao usuário
+    
     const patient = await prisma.patient.findFirst({
       where: { ownerId: session.userId },
     });
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json([], { status: 200 });
     }
 
-    // Busca todos os registros em ordem cronológica invertida
+    
     const history = await prisma.record.findMany({
       where: { patientId: patient.id },
       orderBy: { createdAt: "desc" },

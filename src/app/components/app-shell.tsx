@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../hooks/use-auth"; 
-// NOTA: Remova ou comente o import do useActivePatient até adaptá-lo para o Prisma
+
 
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -85,8 +85,8 @@ export function AppShell({
   };
 
   async function handleLogout() {
-    // Como você usa Prisma, o logout aqui deve limpar o estado do seu useAuth
-    // ou simplesmente redirecionar o usuário para a página inicial
+    
+    
     router.push("/");
   }
 

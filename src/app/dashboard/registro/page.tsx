@@ -11,21 +11,21 @@ export default function RegistroDiarioPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  // Estado unificado com todos os parâmetros exigidos
+  
   const [formData, setFormData] = useState({
-    // Sinais Vitais
+    
     systolic: "", diastolic: "", glucose: "", heart_rate: "", oxygen: "", temperature: "",
-    // Estado Físico
+    
     weight: "", pain_level: "0", pain_location: "", fatigue: false, dizziness: false, edema: false,
-    // Mobilidade
+    
     mobility: "Independente", recent_falls: false, difficulty_standing: false, support_equipment: "Nenhum",
-    // Estado Mental
+    
     oriented: true, mental_confusion: false, excessive_sleepiness: false, speech_alteration: false,
-    // Alimentação
+    
     appetite: "Normal", food_intake: "Total", water_intake: "Adequada", difficulty_swallowing: false,
-    // Eliminação
+    
     urine: "Normal", feces: "Normal", incontinence: "Nenhuma",
-    // Humor e Sono
+    
     mood: "Estável", activity_interest: true, sleep_quality: "Normal",
     notes: ""
   });
@@ -48,8 +48,8 @@ export default function RegistroDiarioPage() {
     return;
   }
 
-  // 1. Mapeamento de campos que devem ser obrigatórios
-  // Excluímos 'notes', 'pain_location' e checkboxes, pois estes podem ser opcionais
+  
+  
   const requiredFields = {
     systolic: "Pressão Sistólica",
     diastolic: "Pressão Diastólica",
@@ -60,25 +60,25 @@ export default function RegistroDiarioPage() {
     weight: "Peso Atual"
   };
 
-  // 2. Verifica quais campos estão vazios
+  
   const missingFields = Object.entries(requiredFields)
     .filter(([key]) => formData[key as keyof typeof formData] === "")
     .map(([, label]) => label);
 
-  // 3. Se houver campos faltando, exibe o erro e para a execução
+  
   if (missingFields.length > 0) {
     setMessage({ 
       type: "error", 
       text: `Preencha todos os campos obrigatórios: ${missingFields.join(", ")}.` 
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Rola para o topo para ver o erro
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
     return;
   }
 
   setLoading(true);
   setMessage({ type: "", text: "" });
 
-  // ... restante do seu código (processedData, fetch, etc.)
+  
   const processedData = {
     ...formData,
     patientId: selectedPatient.id,
@@ -113,7 +113,7 @@ export default function RegistroDiarioPage() {
   }
 };
 
-  // Bloqueio visual se o usuário acessar a aba sem selecionar nenhum paciente no contexto global
+  
   if (!selectedPatient) {
     return (
       <div className="max-w-6xl mx-auto rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">

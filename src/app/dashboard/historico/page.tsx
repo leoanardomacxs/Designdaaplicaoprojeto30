@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Calendar, HeartPulse, Droplets, Thermometer, Wind, Activity, Smile, MessageSquare, Users } from "lucide-react";
-// 1. Importação do hook do contexto global de pacientes
+
 import { usePatient } from "@/context/PatientContext";
 
 export default function HistoricoPage() {
@@ -10,11 +10,11 @@ export default function HistoricoPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 2. Extrai o idoso que está ativado no monitoramento
+  
   const { selectedPatient } = usePatient();
 
   useEffect(() => {
-    // Se não houver paciente selecionado, limpa os estados e cancela o fetch
+    
     if (!selectedPatient?.id) {
       setLoading(false);
       return;
@@ -23,7 +23,7 @@ export default function HistoricoPage() {
     setLoading(true);
     setError("");
 
-    // 3. Atualiza a chamada para a rota correta da pasta dashboard injetando o patientId por query params
+   
     fetch(`/api/dashboard/records/history?patientId=${selectedPatient.id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao carregar o histórico clínico");
@@ -41,9 +41,9 @@ export default function HistoricoPage() {
         setError("Não foi possível processar a linha do tempo médica.");
       })
       .finally(() => setLoading(false));
-  }, [selectedPatient?.id]); // Recarrega sempre que o ID do paciente ativo mudar
+  }, [selectedPatient?.id]); 
 
-  // Função simples para formatar a data do banco do SQLite
+  
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("pt-BR", {
@@ -55,7 +55,7 @@ export default function HistoricoPage() {
     });
   };
 
-  // Estado visual caso o usuário navegue para o Histórico sem selecionar nenhum idoso previamente
+ 
   if (!selectedPatient) {
     return (
       <div className="max-w-6xl mx-auto rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">

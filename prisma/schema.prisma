@@ -12,7 +12,7 @@ model User {
   email     String   @unique
   password  String
   name      String
-  role      String   @default("admin") // Todos os cuidadores entram como admin por padrão
+  role      String   @default("admin") 
   createdAt DateTime @default(now())
   patients  Patient[]
 }
@@ -22,7 +22,7 @@ model Patient {
   name      String
   age       Int
   status    String   @default("Active")
-  condition String?  // Agora o banco aceita a patologia/quadro clínico
+  condition String?  
   ownerId   String
   createdAt DateTime @default(now())
   owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -33,51 +33,51 @@ model Record {
   id        String   @id @default(uuid())
   patientId String
   patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now()) // 👈 ADICIONADO: Essencial para ordenar os seus gráficos
+  createdAt DateTime @default(now()) 
 
-  // 1. SINAIS VITAIS
-  systolic              Int?     // Pressão Sistólica
-  diastolic             Int?     // Pressão Diastólica
-  glucose               Int?     // Glicemia
-  heart_rate            Int?     // Batimentos (Frequência Cardíaca)
-  oxygen                Int?     // Saturação de Oxigênio
-  temperature           Float?   // Temperatura corporal
+  
+  systolic              Int?     
+  diastolic             Int?     
+  glucose               Int?     
+  heart_rate            Int?     
+  oxygen                Int?     
+  temperature           Float?   
 
-  // 2. ESTADO FÍSICO GERAL
-  weight                Float?   // Peso
-  pain_level            Int?     // Nível de dor (0 a 10)
-  pain_location         String?  // Local da dor
-  fatigue               Boolean  @default(false) // Cansaço/fadiga fora do normal
-  dizziness             Boolean  @default(false) // Tontura ou fraqueza
-  edema                 Boolean  @default(false) // Inchaço em pernas ou pés
+  
+  weight                Float?   
+  pain_level            Int?     
+  pain_location         String?  
+  fatigue               Boolean  @default(false) 
+  dizziness             Boolean  @default(false) 
+  edema                 Boolean  @default(false) 
 
-  // 3. MOBILIDADE E SEGURANÇA
-  mobility              String   @default("Independente") // Independente, Precisa de Ajuda, Acamado
-  recent_falls          Boolean  @default(false)          // Quedas recentes ou quase quedas
-  difficulty_standing   Boolean  @default(false)          // Dificuldade para levantar/sentar
-  support_equipment     String?  // Uso de apoio (bengala, andador, nenhum)
+  
+  mobility              String   @default("Independente") 
+  recent_falls          Boolean  @default(false)          
+  difficulty_standing   Boolean  @default(false)          
+  support_equipment     String?  
 
-  // 4. ESTADO MENTAL E NEUROLÓGICO
-  oriented              Boolean  @default(true)  // Está orientado (sabe onde está e o dia)
-  mental_confusion      Boolean  @default(false) // Confusão mental ou esquecimentos
-  excessive_sleepiness  Boolean  @default(false) // Sonolência excessiva ou agitação
-  speech_alteration     Boolean  @default(false) // Alterações de fala ou fraqueza repentina
+  
+  oriented              Boolean  @default(true)  
+  mental_confusion      Boolean  @default(false) 
+  excessive_sleepiness  Boolean  @default(false) 
+  speech_alteration     Boolean  @default(false) 
 
-  // 5. ALIMENTAÇÃO E HIDRATAÇÃO
-  appetite              String   @default("Normal") // Normal / Reduzido / Ausente
-  food_intake           String   @default("Total")  // Total / Parcial / Pouco
-  water_intake          String   @default("Adequada") // Baixa / Adequada
-  difficulty_swallowing Boolean  @default(false)      // Dificuldade para engolir
+  
+  appetite              String   @default("Normal") 
+  food_intake           String   @default("Total")  
+  water_intake          String   @default("Adequada") 
+  difficulty_swallowing Boolean  @default(false)      
 
-  // 6. ELIMINAÇÃO
-  urine                 String   @default("Normal") // Normal / Alterada (dor, cor estranha, pouca)
-  feces                 String   @default("Normal") // Normal / Prisão de ventre / Diarreia
-  incontinence          String   @default("Nenhuma") // Nenhuma / Urinária / Fecal / Ambas
+  
+  urine                 String   @default("Normal") 
+  feces                 String   @default("Normal") 
+  incontinence          String   @default("Nenhuma") 
 
-  // 7. HUMOR E BEM-ESTAR BÁSICO
-  mood                  String   @default("Estável") // Estável / Triste / Irritado / Apático
-  activity_interest     Boolean  @default(true)     // Interesse nas atividades do dia
-  sleep_quality         String   @default("Normal") // Normal / Muito alterado
+  
+  mood                  String   @default("Estável") 
+  activity_interest     Boolean  @default(true)     
+  sleep_quality         String   @default("Normal") 
 
-  notes                 String?  // Observações gerais adicionais
-} // 👈 A chave de fechamento foi movida para o final do modelo Record!
+  notes                 String?  
+} 

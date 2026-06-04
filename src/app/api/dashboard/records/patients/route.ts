@@ -4,10 +4,10 @@ import { requireSession } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    // 1. Pega a sua sessão real usando a função que você criou
+    
     const session = await requireSession();
 
-    // Se por acaso não achar o userId, barra
+    
     if (!session || !session.userId) {
       return NextResponse.json({ error: "Não autorizado. Faça login novamente." }, { status: 401 });
     }
@@ -18,21 +18,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Nome e idade são obrigatórios." }, { status: 400 });
     }
 
-    // 2. Cria o paciente atrelado ao seu userId (que vem do JWT)
+    
     const newPatient = await prisma.patient.create({
       data: {
         name: body.name,
         age: parseInt(body.age),
         condition: body.condition || "", 
         status: "Active",
-        ownerId: session.userId, // 👈 Mudado de id para userId para bater com seu JWT
+        ownerId: session.userId, 
       },
     });
 
     return NextResponse.json(newPatient, { status: 201 });
   } catch (error: any) {
     console.error("ERRO NO POST:", error);
-    // Se o erro for de falta de autenticação lançado pelo requireSession
+    
     if (error.message === "Não autenticado.") {
       return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
     }
@@ -42,17 +42,17 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    // 1. Pega a sua sessão real aqui também
+    
     const session = await requireSession();
 
     if (!session || !session.userId) {
       return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
     }
 
-    // 3. Busca apenas os pacientes desse usuário
+    
     const patients = await prisma.patient.findMany({
       where: {
-        ownerId: session.userId, // 👈 Ajustado para userId
+        ownerId: session.userId, 
       },
       include: {
         records: {

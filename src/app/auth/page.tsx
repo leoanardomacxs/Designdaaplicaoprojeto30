@@ -5,7 +5,7 @@ import { HeartPulse, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-// REMOVIDO: Importações do TanStack Router, Supabase e Lovable API anterior
+
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -21,7 +21,7 @@ export default function AuthPage() {
 
     try {
       if (mode === "signup") {
-        // CADASTRAR NO SEU BACKEND (SQLite via API Route)
+        
         const res = await fetch("/api/auth/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -33,7 +33,7 @@ export default function AuthPage() {
         alert("Conta criada com sucesso! Mude para o modo 'Entrar'.");
         setMode("signin");
       } else {
-        // ENTRAR NO SEU BACKEND (SQLite via API Route)
+        
         const res = await fetch("/api/auth/signin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -42,7 +42,7 @@ export default function AuthPage() {
 
         if (!res.ok) throw new Error("E-mail ou senha incorretos.");
 
-        // Redireciona para o painel principal
+        
         router.push("/dashboard");
       }
     } catch (err) {

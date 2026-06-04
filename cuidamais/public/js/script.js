@@ -218,9 +218,9 @@ function atualizarGrafico(registros){
 
 }
 
-// =========================
-// GERAR PDF
-// =========================
+
+
+
 
 document
     .getElementById("btnPdf")
@@ -238,11 +238,11 @@ async function gerarPDF() {
 
         const doc = new jsPDF();
 
-        // Título
+        
         doc.setFontSize(18);
         doc.text("Relatório CuidaMais", 14, 20);
 
-        // Data de geração
+        
         const dataAtual = new Date().toLocaleDateString("pt-BR");
 
         doc.setFontSize(10);
@@ -252,7 +252,7 @@ async function gerarPDF() {
             28
         );
 
-        // Dados da tabela
+        
         const dados = registros.map(registro => [
             registro.nomePaciente,
             registro.dataRegistro,
@@ -262,7 +262,7 @@ async function gerarPDF() {
             registro.humor || "-"
         ]);
 
-        // Tabela
+        
         doc.autoTable({
             startY: 35,
             head: [[
@@ -276,7 +276,7 @@ async function gerarPDF() {
             body: dados
         });
 
-        // Salvar PDF
+        
         doc.save("relatorio-cuidaMais.pdf");
 
     } catch (erro) {

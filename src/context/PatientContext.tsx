@@ -19,13 +19,13 @@ const PatientContext = createContext<PatientContextType | undefined>(undefined);
 export function PatientProvider({ children }: { children: React.ReactNode }) {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
-  // Carrega o paciente selecionado anteriormente ao iniciar o app
+  
   useEffect(() => {
     const saved = localStorage.getItem('selectedPatient');
     if (saved) {
       setSelectedPatient(JSON.parse(saved));
     }
-  }, []); // <-- Corrigido aqui! Removido o </script> intruso
+  }, []); 
 
   const selectPatient = (patient: Patient) => {
     setSelectedPatient(patient);

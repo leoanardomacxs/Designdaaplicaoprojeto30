@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireSession } from "@/lib/auth";
 
-// Função para buscar um paciente específico pelo ID
+
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await requireSession();
@@ -35,7 +35,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// Função para excluir um paciente
+
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await requireSession();

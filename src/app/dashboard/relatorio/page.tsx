@@ -44,7 +44,7 @@ export default function RelatorioMedicoPage() {
   }
 
   return (
-    // 1. ADICIONADO: 'print:absolute print:top-0 print:left-0 print:w-full print:p-0' para resetar a folha
+    
     <div className="max-w-4xl mx-auto space-y-6 p-4 sm:p-0 print:absolute print:top-0 print:left-0 print:w-full print:p-0 print:m-0">
       
       {/* Topo - Menu de Ações (Ocultado 100% na impressão) */}

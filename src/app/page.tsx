@@ -17,7 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import Link from "next/link"; // Trocado para o Link oficial do Next.js
+import Link from "next/link"; 
 
 function Nav() {
   const [open, setOpen] = useState(false);

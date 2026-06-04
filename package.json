@@ -11,16 +11,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leoanardomacxs/Designdaaplicaoprojeto30.git"
+    "url": "git+https://github.com/seu-usuario/seu-repositorio.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/leoanardomacxs/Designdaaplicaoprojeto30/issues"
+    "url": "https://github.com/seu-usuario/seu-repositorio/issues"
   },
-  "homepage": "https://github.com/leoanardomacxs/Designdaaplicaoprojeto30#readme",
+  "homepage": "https://github.com/seu-usuario/seu-repositorio#readme",
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
     "@tailwindcss/postcss": "^4.3.0",

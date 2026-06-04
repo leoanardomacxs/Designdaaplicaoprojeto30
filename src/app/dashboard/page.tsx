@@ -44,15 +44,13 @@ export default function DashboardPage() {
   }
 
   setLoading(true);
-  // MUDANÇA AQUI: Apontar para a rota [id] em vez de uma rota genérica
+  
   fetch(`/api/dashboard/records/patients/${selectedPatient.id}`)
     .then(async (res) => {
       if (!res.ok) throw new Error("Erro ao buscar registros");
       return res.json();
     })
     .then((data) => {
-      // Ajuste conforme o que a sua API [id]/route.ts retorna
-      // Se ela retornar o paciente com o array de records dentro:
       setRecords(data.records || []);
     })
     .catch((err) => {
@@ -60,7 +58,7 @@ export default function DashboardPage() {
       setRecords([]);
     })
     .finally(() => setLoading(false));
-}, [selectedPatient?.id]); // Isso vai disparar sempre que o usuário trocar o paciente
+}, [selectedPatient?.id]); 
 
   const latest = records.length > 0 ? records[0] : null;
 

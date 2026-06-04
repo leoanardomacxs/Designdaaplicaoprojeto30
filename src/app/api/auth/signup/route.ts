@@ -14,12 +14,12 @@ export async function POST(req: NextRequest) {
     if (existing)
       return NextResponse.json({ error: "E-mail já cadastrado." }, { status: 409 });
 
-    // 1. Cria o Cuidador (User Admin)
+    
     const user = await prisma.user.create({
       data: { email, password: await hashPassword(password), name, role: "admin" },
     });
 
-    // 2. Cria automaticamente a paciente teste "Verenice" vinculada a este Cuidador
+    
     const verenice = await prisma.patient.create({
       data: {
         name: "Verenice Silva",
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 3. Insere um registro clínico inicial simulado para a Verenice ter histórico visível imediatamente
+    
     await prisma.record.create({
       data: {
         patientId: verenice.id,
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         pain_location: "Lombar de leve",
         fatigue: false,
         dizziness: false,
-        edema: true, // Inchaço nos pés comum em idosos
+        edema: true, 
         mobility: "Precisa de Ajuda",
         support_equipment: "Bengala",
         oriented: true,
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 4. Gera a sessão JWT
+    
     const token = await signToken({ userId: user.id, email: user.email });
     const cookieStore = await cookies();
     cookieStore.set("session", token, { httpOnly: true, path: "/", maxAge: 60 * 60 * 24 * 7 });

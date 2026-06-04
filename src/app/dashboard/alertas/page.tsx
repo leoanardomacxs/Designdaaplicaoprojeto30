@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { AlertTriangle, ShieldCheck, BellRing, Info, Users } from "lucide-react";
-// 1. Importa o hook do contexto de pacientes que você já usa nas outras telas
+
 import { usePatient } from "@/context/PatientContext"; 
 
 export default function AlertasPage() {
@@ -10,11 +10,11 @@ export default function AlertasPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 2. Extrai o paciente selecionado no painel geral
+  
   const { selectedPatient } = usePatient();
 
   useEffect(() => {
-    // Se não houver nenhum paciente selecionado no monitoramento, não faz o fetch
+    
     if (!selectedPatient?.id) {
       setLoading(false);
       return;
@@ -23,7 +23,7 @@ export default function AlertasPage() {
     setLoading(true);
     setError("");
 
-    // 3. Faz o fetch apontando para a rota correta do dashboard passando o ID via Query Params (?patientId=...)
+    
     fetch(`/api/dashboard/records/alerts?patientId=${selectedPatient.id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao carregar triagem de alertas");
@@ -41,9 +41,9 @@ export default function AlertasPage() {
         setError("Não foi possível processar a triagem de alertas clínicos.");
       })
       .finally(() => setLoading(false));
-  }, [selectedPatient?.id]); // Executa novamente sempre que o ID do paciente ativo mudar
+  }, [selectedPatient?.id]); 
 
-  // Estado caso o usuário acesse a aba sem ter ativado nenhum paciente antes
+  
   if (!selectedPatient) {
     return (
       <div className="max-w-4xl mx-auto rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">

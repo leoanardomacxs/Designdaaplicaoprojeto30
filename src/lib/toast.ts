@@ -1,4 +1,4 @@
-// Simple toast system using DOM events. No external libs.
+
 import { useEffect, useState } from "react";
 
 export type ToastKind = "success" | "error" | "info";
