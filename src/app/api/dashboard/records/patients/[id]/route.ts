@@ -1,21 +1,50 @@
-// src/app/api/dashboard/records/patients/[id]/route.ts
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireSession } from "@/lib/auth";
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+// Função para buscar um paciente específico pelo ID
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await requireSession();
-    if (!session || !session.userId) {
+    if (!session?.userId) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { id } = await params;
 
-    // Deleta apenas se o paciente pertencer ao usuário logado (Segurança!)
+    const patient = await prisma.patient.findUnique({
+      where: { 
+        id: id,
+        ownerId: session.userId 
+      },
+      include: { 
+        records: { 
+          orderBy: { createdAt: "desc" } 
+        } 
+      }
+    });
+
+    if (!patient) {
+      return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });
+    }
+
+    return NextResponse.json(patient);
+  } catch (error) {
+    console.error("Erro no GET do paciente:", error);
+    return NextResponse.json({ error: "Erro ao buscar paciente" }, { status: 500 });
+  }
+}
+
+// Função para excluir um paciente
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  try {
+    const session = await requireSession();
+    if (!session?.userId) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
+    const { id } = await params;
+
     await prisma.patient.delete({
       where: { 
         id: id,
@@ -25,7 +54,7 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Paciente excluído com sucesso" });
   } catch (error) {
-    console.error("Erro ao excluir:", error);
+    console.error("Erro ao excluir paciente:", error);
     return NextResponse.json({ error: "Erro ao excluir" }, { status: 500 });
   }
 }

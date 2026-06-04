@@ -37,22 +37,30 @@ export default function DashboardPage() {
   const { selectedPatient } = usePatient();
 
   useEffect(() => {
-    if (!selectedPatient?.id) {
-      setRecords([]);
-      setLoading(false);
-      return;
-    }
+  if (!selectedPatient?.id) {
+    setRecords([]);
+    setLoading(false);
+    return;
+  }
 
-    setLoading(true);
-    fetch(`/api/dashboard/records/history?patientId=${selectedPatient.id}`)
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Erro ao buscar registros");
-        return res.json();
-      })
-      .then((data) => setRecords(Array.isArray(data) ? data : (data.records || [])))
-      .catch(() => setRecords([]))
-      .finally(() => setLoading(false));
-  }, [selectedPatient?.id]);
+  setLoading(true);
+  // MUDANÇA AQUI: Apontar para a rota [id] em vez de uma rota genérica
+  fetch(`/api/dashboard/records/patients/${selectedPatient.id}`)
+    .then(async (res) => {
+      if (!res.ok) throw new Error("Erro ao buscar registros");
+      return res.json();
+    })
+    .then((data) => {
+      // Ajuste conforme o que a sua API [id]/route.ts retorna
+      // Se ela retornar o paciente com o array de records dentro:
+      setRecords(data.records || []);
+    })
+    .catch((err) => {
+      console.error(err);
+      setRecords([]);
+    })
+    .finally(() => setLoading(false));
+}, [selectedPatient?.id]); // Isso vai disparar sempre que o usuário trocar o paciente
 
   const latest = records.length > 0 ? records[0] : null;
 
