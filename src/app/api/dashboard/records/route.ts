@@ -52,40 +52,56 @@ export async function POST(req: NextRequest) {
     }
 
     // Cria o registro associado ao ID real e verificado
+    // Cria o registro associado ao ID real e verificado
     const newRecord = await prisma.record.create({
       data: {
         patientId: body.patientId,
+        
+        // Sinais Vitais
         systolic: body.systolic ? parseInt(body.systolic) : null,
         diastolic: body.diastolic ? parseInt(body.diastolic) : null,
         glucose: body.glucose ? parseInt(body.glucose) : null,
         heart_rate: body.heart_rate ? parseInt(body.heart_rate) : null,
         oxygen: body.oxygen ? parseInt(body.oxygen) : null,
         temperature: body.temperature ? parseFloat(body.temperature) : null,
+        
+        // Estado Físico
         weight: body.weight ? parseFloat(body.weight) : null,
         pain_level: body.pain_level ? parseInt(body.pain_level) : null,
-        pain_location: body.pain_location || null,
+        pain_location: body.pain_location,
         fatigue: !!body.fatigue,
         dizziness: !!body.dizziness,
         edema: !!body.edema,
-        mobility: body.mobility || "Independente",
+        
+        // Mobilidade
+        mobility: body.mobility,
         recent_falls: !!body.recent_falls,
         difficulty_standing: !!body.difficulty_standing,
-        support_equipment: body.support_equipment || "Nenhum",
-        oriented: body.oriented !== false,
+        support_equipment: body.support_equipment,
+        
+        // Mental
+        oriented: !!body.oriented, // Mudado para garantir o valor real do checkbox
         mental_confusion: !!body.mental_confusion,
         excessive_sleepiness: !!body.excessive_sleepiness,
         speech_alteration: !!body.speech_alteration,
-        appetite: body.appetite || "Normal",
-        food_intake: body.food_intake || "Total",
-        water_intake: body.water_intake || "Adequada",
+        
+        // Alimentação
+        appetite: body.appetite,
+        food_intake: body.food_intake,
+        water_intake: body.water_intake,
         difficulty_swallowing: !!body.difficulty_swallowing,
-        urine: body.urine || "Normal",
-        feces: body.feces || "Normal",
-        incontinence: body.incontinence || "Nenhuma",
-        mood: body.mood || "Estável",
-        activity_interest: body.activity_interest !== false,
-        sleep_quality: body.sleep_quality || "Normal",
-        notes: body.notes || null,
+        
+        // Eliminação
+        urine: body.urine,
+        feces: body.feces,
+        incontinence: body.incontinence,
+        
+        // Humor/Sono
+        mood: body.mood,
+        activity_interest: !!body.activity_interest,
+        sleep_quality: body.sleep_quality,
+        
+        notes: body.notes,
       },
     });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Users, UserPlus, Calendar, Activity, X, UserCheck } from "lucide-react";
+import { Users, UserPlus, Calendar, Activity, X, UserCheck, Trash2 } from "lucide-react";
 import { usePatient } from "@/context/PatientContext"; 
 
 export default function PacientesPage() {
@@ -13,7 +13,6 @@ export default function PacientesPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // Extraímos os estados e funções globais do Contexto
   const { selectedPatient, selectPatient } = usePatient();
 
   const loadPatients = () => {
@@ -38,12 +37,26 @@ export default function PacientesPage() {
     loadPatients();
   }, []);
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.")) return;
+
+    try {
+      const res = await fetch(`/api/dashboard/records/patients/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        loadPatients();
+      } else {
+        alert("Erro ao excluir paciente.");
+      }
+    } catch (err) {
+      alert("Erro ao conectar com o servidor.");
+    }
+  };
+
   const handleCreatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setError("");
 
-    // Converte a idade para número inteiro antes de despachar para o Prisma
     const payload = {
       ...newPatient,
       age: parseInt(newPatient.age, 10) || null
@@ -63,7 +76,6 @@ export default function PacientesPage() {
         setNewPatient({ name: "", age: "", condition: "" });
         loadPatients(); 
         
-        // Se for o único ou primeiro paciente que a pessoa cadastrou, já deixa selecionado automaticamente
         if (patients.length === 0 && responseData) {
           selectPatient({
             id: responseData.id,
@@ -85,7 +97,6 @@ export default function PacientesPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {/* Cabeçalho */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-800">Meus Idosos Assistidos</h1>
@@ -105,7 +116,6 @@ export default function PacientesPage() {
         </div>
       )}
 
-      {/* Grid de Conteúdo */}
       {loading ? (
         <div className="flex h-40 items-center justify-center text-sm font-medium text-slate-400 bg-white border border-dashed rounded-2xl">
           Mapeando rede de pacientes vinculados...
@@ -120,8 +130,6 @@ export default function PacientesPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {patients.map((patient) => {
             const isSelected = selectedPatient?.id === patient.id;
-
-            // Safe split para evitar quebras em strings inexistentes ou nulas
             const initials = patient.name
               ? patient.name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase()
               : "ID";
@@ -165,83 +173,60 @@ export default function PacientesPage() {
                     </div>
                   </div>
                 </div>
+
+                <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const url = `${window.location.origin}/share/${patient.id}`;
+                      navigator.clipboard.writeText(url);
+                      alert("Link de visualização copiado com sucesso!");
+                    }}
+                    className="flex-1 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    🔗 Copiar Link
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(patient.id);
+                    }}
+                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Modal Modular de Cadastro */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden transform transition-all scale-100">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
               <h2 className="font-display text-lg font-bold text-slate-800">Novo Vínculo de Idoso</h2>
-              <button 
-                onClick={() => setShowModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              <button onClick={() => setShowModal(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100"><X className="h-5 w-5" /></button>
             </div>
             
             <form onSubmit={handleCreatePatient} className="p-6 space-y-4">
-              {error && (
-                <div className="p-3 text-xs font-semibold border bg-rose-50 text-rose-700 border-rose-100 rounded-xl">
-                  {error}
-                </div>
-              )}
-
+              {error && <div className="p-3 text-xs font-semibold border bg-rose-50 text-rose-700 border-rose-100 rounded-xl">{error}</div>}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Nome Completo</label>
-                <input 
-                  type="text" 
-                  required
-                  value={newPatient.name}
-                  onChange={(e) => setNewPatient({...newPatient, name: e.target.value})}
-                  placeholder="Ex: Verenice Silva"
-                  className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-sm focus:border-blue-500 focus:outline-none transition-colors"
-                />
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Nome Completo</label>
+                <input required type="text" value={newPatient.name} onChange={(e) => setNewPatient({...newPatient, name: e.target.value})} className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-sm" />
               </div>
-
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Idade</label>
-                <input 
-                  type="number" 
-                  required
-                  value={newPatient.age}
-                  onChange={(e) => setNewPatient({...newPatient, age: e.target.value})}
-                  placeholder="Ex: 78"
-                  className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-sm focus:border-blue-500 focus:outline-none transition-colors"
-                />
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Idade</label>
+                <input required type="number" value={newPatient.age} onChange={(e) => setNewPatient({...newPatient, age: e.target.value})} className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-sm" />
               </div>
-
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Condições Clínicas de Atenção</label>
-                <input 
-                  type="text" 
-                  value={newPatient.condition}
-                  onChange={(e) => setNewPatient({...newPatient, condition: e.target.value})}
-                  placeholder="Ex: Hipertensão, Diabetes Tipo 2"
-                  className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-sm focus:border-blue-500 focus:outline-none transition-colors"
-                />
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Condições Clínicas</label>
+                <input type="text" value={newPatient.condition} onChange={(e) => setNewPatient({...newPatient, condition: e.target.value})} className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-sm" />
               </div>
-
               <div className="pt-2 border-t border-slate-100 flex gap-3 justify-end text-sm">
-                <button 
-                  type="button" 
-                  onClick={() => setShowModal(false)}
-                  className="h-11 px-4 font-semibold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={submitting}
-                  className="h-11 px-5 bg-blue-600 text-white font-semibold rounded-xl shadow-md shadow-blue-500/10 hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                >
-                  {submitting ? "Cadastrando..." : "Confirmar Vínculo"}
-                </button>
+                <button type="button" onClick={() => setShowModal(false)} className="h-11 px-4 font-semibold text-slate-500 hover:bg-slate-50 rounded-xl">Cancelar</button>
+                <button type="submit" disabled={submitting} className="h-11 px-5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-50">{submitting ? "Cadastrando..." : "Confirmar Vínculo"}</button>
               </div>
             </form>
           </div>

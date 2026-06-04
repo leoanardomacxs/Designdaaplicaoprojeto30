@@ -41,52 +41,77 @@ export default function RegistroDiarioPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedPatient) {
-      setMessage({ type: "error", text: "Selecione um paciente na aba 'Pacientes' antes de registrar." });
-      return;
-    }
+  e.preventDefault();
+  
+  if (!selectedPatient) {
+    setMessage({ type: "error", text: "Selecione um paciente na aba 'Pacientes' antes de registrar." });
+    return;
+  }
 
-    setLoading(true);
-    setMessage({ type: "", text: "" });
-
-    // Tratamento e conversão de tipos para evitar falhas de validação no Prisma/banco de dados
-    const processedData = {
-      ...formData,
-      patientId: selectedPatient.id,
-      // Conversões numéricas seguras ou null se estiverem vazios
-      systolic: formData.systolic ? parseInt(formData.systolic, 10) : null,
-      diastolic: formData.diastolic ? parseInt(formData.diastolic, 10) : null,
-      glucose: formData.glucose ? parseInt(formData.glucose, 10) : null,
-      heart_rate: formData.heart_rate ? parseInt(formData.heart_rate, 10) : null,
-      oxygen: formData.oxygen ? parseInt(formData.oxygen, 10) : null,
-      temperature: formData.temperature ? parseFloat(formData.temperature) : null,
-      weight: formData.weight ? parseFloat(formData.weight) : null,
-      pain_level: parseInt(formData.pain_level, 10) || 0,
-    };
-
-    try {
-      const res = await fetch("/api/dashboard/records", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(processedData),
-      });
-
-      if (res.ok) {
-        setMessage({ type: "success", text: "Evolução clínica salva com sucesso!" });
-        // Redireciona para o painel principal de métricas para conferir os resultados atualizados
-        setTimeout(() => router.push("/dashboard"), 1500);
-      } else {
-        const err = await res.json();
-        setMessage({ type: "error", text: err.error || "Erro ao salvar dados." });
-      }
-    } catch (error) {
-      setMessage({ type: "error", text: "Erro de conexão. Verifique se a rota API existe." });
-    } finally {
-      setLoading(false);
-    }
+  // 1. Mapeamento de campos que devem ser obrigatórios
+  // Excluímos 'notes', 'pain_location' e checkboxes, pois estes podem ser opcionais
+  const requiredFields = {
+    systolic: "Pressão Sistólica",
+    diastolic: "Pressão Diastólica",
+    glucose: "Glicemia",
+    heart_rate: "Frequência Cardíaca",
+    oxygen: "Saturação de Oxigênio",
+    temperature: "Temperatura Corporal",
+    weight: "Peso Atual"
   };
+
+  // 2. Verifica quais campos estão vazios
+  const missingFields = Object.entries(requiredFields)
+    .filter(([key]) => formData[key as keyof typeof formData] === "")
+    .map(([, label]) => label);
+
+  // 3. Se houver campos faltando, exibe o erro e para a execução
+  if (missingFields.length > 0) {
+    setMessage({ 
+      type: "error", 
+      text: `Preencha todos os campos obrigatórios: ${missingFields.join(", ")}.` 
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Rola para o topo para ver o erro
+    return;
+  }
+
+  setLoading(true);
+  setMessage({ type: "", text: "" });
+
+  // ... restante do seu código (processedData, fetch, etc.)
+  const processedData = {
+    ...formData,
+    patientId: selectedPatient.id,
+    systolic: parseInt(formData.systolic, 10),
+    diastolic: parseInt(formData.diastolic, 10),
+    glucose: parseInt(formData.glucose, 10),
+    heart_rate: parseInt(formData.heart_rate, 10),
+    oxygen: parseInt(formData.oxygen, 10),
+    temperature: parseFloat(formData.temperature),
+    weight: parseFloat(formData.weight),
+    pain_level: parseInt(formData.pain_level, 10),
+  };
+
+  try {
+    const res = await fetch("/api/dashboard/records", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(processedData),
+    });
+
+    if (res.ok) {
+      setMessage({ type: "success", text: "Evolução clínica salva com sucesso!" });
+      setTimeout(() => router.push("/dashboard"), 1500);
+    } else {
+      const err = await res.json();
+      setMessage({ type: "error", text: err.error || "Erro ao salvar dados." });
+    }
+  } catch (error) {
+    setMessage({ type: "error", text: "Erro de conexão." });
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Bloqueio visual se o usuário acessar a aba sem selecionar nenhum paciente no contexto global
   if (!selectedPatient) {

@@ -19,7 +19,6 @@ const nav = [
   { href: "/alertas", label: "Alertas", icon: BellRing },
   { href: "/relatorio", label: "Relatório médico", icon: FileText },
   { href: "/pacientes", label: "Pacientes", icon: Users },
-  { href: "/admin", label: "Admin", icon: Shield },
 ] as const;
 
 function Brand() {

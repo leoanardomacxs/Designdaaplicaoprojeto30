@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { TrendingUp, Activity, HeartPulse, Droplets, Thermometer, Users } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { TrendingUp, Activity, HeartPulse, Droplets, Thermometer, Users, Loader2 } from "lucide-react";
 // 1. Importa o hook do contexto de pacientes que você gerencia no app
 import { usePatient } from "@/context/PatientContext"; 
 
@@ -10,12 +10,36 @@ export default function GraficosPage() {
   const [chartData, setChartData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // Estado para capturar a largura real da tela e fazer o gráfico ser responsivo de verdade
+  const [chartWidth, setChartWidth] = useState(500);
 
   // 2. Acessa o idoso que está ativado no momento
   const { selectedPatient } = usePatient();
 
+  // Monitora o tamanho da tela para recalcular os gráficos sem precisar do ResponsiveContainer fujão
   useEffect(() => {
-    // Se não tiver paciente selecionado no painel, não executa o fetch
+    setHasMounted(true);
+    
+    const handleResize = () => {
+      // Pega a largura do container ou calcula baseado na janela do navegador
+      const width = window.innerWidth;
+      if (width < 640) {
+        setChartWidth(width - 48); // Telas mobile
+      } else if (width < 1024) {
+        setChartWidth(width - 80); // Tablets
+      } else {
+        setChartWidth(520); // Grid de 2 colunas no Desktop
+      }
+    };
+
+    handleResize(); // Executa ao montar a página
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
     if (!selectedPatient?.id) {
       setLoading(false);
       return;
@@ -24,7 +48,6 @@ export default function GraficosPage() {
     setLoading(true);
     setError("");
 
-    // 3. Aponta para a API correta do dashboard adicionando o query param do ID do paciente
     fetch(`/api/dashboard/records/stats?patientId=${selectedPatient.id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao carregar métricas dos gráficos");
@@ -42,9 +65,8 @@ export default function GraficosPage() {
         setError("Não foi possível processar o histórico de estatísticas.");
       })
       .finally(() => setLoading(false));
-  }, [selectedPatient?.id]); // Recarrega sempre que mudar o idoso monitorado
+  }, [selectedPatient?.id]);
 
-  // Estado visual caso o usuário acesse sem ter selecionado um paciente globalmente
   if (!selectedPatient) {
     return (
       <div className="max-w-6xl mx-auto rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">
@@ -61,7 +83,6 @@ export default function GraficosPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h1 className="font-display text-2xl font-bold text-slate-800">Painel de Tendências Clínicas</h1>
-        {/* 4. Nome dinâmico injetado aqui */}
         <p className="text-sm text-slate-500 mt-1">
           Análise visual e monitoramento de saúde de: <strong className="text-blue-600">{selectedPatient.name}</strong>
         </p>
@@ -74,8 +95,9 @@ export default function GraficosPage() {
       )}
 
       {loading ? (
-        <div className="flex h-40 items-center justify-center text-sm font-medium text-slate-400 bg-white border border-dashed rounded-2xl">
-          Construindo curvas de tendência médica...
+        <div className="flex h-64 flex-col items-center justify-center gap-3 text-sm font-medium text-slate-500 bg-white border border-dashed border-slate-200 rounded-2xl">
+          <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+          <span>Construindo curvas de tendência médica...</span>
         </div>
       ) : chartData.length === 0 ? (
         <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">
@@ -89,13 +111,13 @@ export default function GraficosPage() {
         <div className="grid gap-6 md:grid-cols-2">
           
           {/* Gráfico 1: Pressão Arterial */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col items-center overflow-hidden">
+            <h3 className="text-sm font-bold text-slate-800 mb-4 self-start flex items-center gap-2">
               <HeartPulse className="h-4 w-4 text-blue-600" /> Histórico de Pressão Arterial (mmHg)
             </h3>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <div className="w-full flex justify-center items-center">
+              {hasMounted && (
+                <LineChart width={chartWidth} height={260} data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="data" stroke="#94a3b8" fontSize={11} tickLine={false} />
                   <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} domain={['dataMin - 10', 'dataMax + 10']} />
@@ -104,18 +126,18 @@ export default function GraficosPage() {
                   <Line type="monotone" dataKey="systolic" name="Sistólica (Máx)" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} connectNulls />
                   <Line type="monotone" dataKey="diastolic" name="Diastólica (Mín)" stroke="#38bdf8" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} connectNulls />
                 </LineChart>
-              </ResponsiveContainer>
+              )}
             </div>
           </div>
 
           {/* Gráfico 2: Glicemia Capilar */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col items-center overflow-hidden">
+            <h3 className="text-sm font-bold text-slate-800 mb-4 self-start flex items-center gap-2">
               <Droplets className="h-4 w-4 text-emerald-600" /> Curva de Glicemia (mg/dL)
             </h3>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <div className="w-full flex justify-center items-center">
+              {hasMounted && (
+                <LineChart width={chartWidth} height={260} data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="data" stroke="#94a3b8" fontSize={11} tickLine={false} />
                   <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} domain={['dataMin - 20', 'dataMax + 20']} />
@@ -123,18 +145,18 @@ export default function GraficosPage() {
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                   <Line type="monotone" dataKey="glucose" name="Glicemia" stroke="#10b981" strokeWidth={3} dot={{ r: 5 }} connectNulls />
                 </LineChart>
-              </ResponsiveContainer>
+              )}
             </div>
           </div>
 
           {/* Gráfico 3: Temperatura Corporal */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col items-center overflow-hidden">
+            <h3 className="text-sm font-bold text-slate-800 mb-4 self-start flex items-center gap-2">
               <Thermometer className="h-4 w-4 text-amber-500" /> Monitoramento de Temperatura (°C)
             </h3>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <div className="w-full flex justify-center items-center">
+              {hasMounted && (
+                <LineChart width={chartWidth} height={260} data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="data" stroke="#94a3b8" fontSize={11} tickLine={false} />
                   <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} domain={[35, 40]} />
@@ -142,18 +164,18 @@ export default function GraficosPage() {
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                   <Line type="monotone" dataKey="temperature" name="Temperatura" stroke="#f59e0b" strokeWidth={3} dot={{ r: 5 }} connectNulls />
                 </LineChart>
-              </ResponsiveContainer>
+              )}
             </div>
           </div>
 
           {/* Gráfico 4: Frequência Cardíaca */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col items-center overflow-hidden">
+            <h3 className="text-sm font-bold text-slate-800 mb-4 self-start flex items-center gap-2">
               <Activity className="h-4 w-4 text-rose-600" /> Pulsação / Frequência Cardíaca (bpm)
             </h3>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <div className="w-full flex justify-center items-center">
+              {hasMounted && (
+                <LineChart width={chartWidth} height={260} data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="data" stroke="#94a3b8" fontSize={11} tickLine={false} />
                   <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} domain={['dataMin - 10', 'dataMax + 10']} />
@@ -161,7 +183,7 @@ export default function GraficosPage() {
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                   <Line type="monotone" dataKey="heart_rate" name="Frequência Cardíaca" stroke="#e11d48" strokeWidth={3} dot={{ r: 5 }} connectNulls />
                 </LineChart>
-              </ResponsiveContainer>
+              )}
             </div>
           </div>
 

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./../database/database.db"
+  url      = "file:./database.db"
 }
 
 model User {
@@ -22,7 +22,7 @@ model Patient {
   name      String
   age       Int
   status    String   @default("Active")
-  condition String?  // 👈 ADICIONADO: Agora o banco aceita a patologia/quadro clínico
+  condition String?  // Agora o banco aceita a patologia/quadro clínico
   ownerId   String
   createdAt DateTime @default(now())
   owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -30,10 +30,10 @@ model Patient {
 }
 
 model Record {
-  id                    String   @id @default(cuid())
-  patientId             String
-  createdAt             DateTime @default(now())
-  patient               Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) // 👈 ADICIONADO: Essencial para ordenar os seus gráficos
 
   // 1. SINAIS VITAIS
   systolic              Int?     // Pressão Sistólica
@@ -80,4 +80,4 @@ model Record {
   sleep_quality         String   @default("Normal") // Normal / Muito alterado
 
   notes                 String?  // Observações gerais adicionais
-}
+} // 👈 A chave de fechamento foi movida para o final do modelo Record!

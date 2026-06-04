@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { 
-  HeartPulse, Droplets, Thermometer, Activity, Wind, Smile, Plus, AlertCircle, ShieldCheck, UserCheck 
+  HeartPulse, Droplets, Thermometer, Activity, Wind, Smile, Plus, AlertCircle 
 } from "lucide-react";
 import Link from "next/link";
 import { usePatient } from "@/context/PatientContext";
@@ -44,31 +44,21 @@ export default function DashboardPage() {
     }
 
     setLoading(true);
-    
-    // Certifique-se de que a rota abaixo existe no seu backend
-    fetch(`/api/dashboard/records?patientId=${selectedPatient.id}`)
+    fetch(`/api/dashboard/records/history?patientId=${selectedPatient.id}`)
       .then(async (res) => {
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          throw new Error(errorData.error || `Erro ${res.status}: Falha ao buscar registros`);
-        }
+        if (!res.ok) throw new Error("Erro ao buscar registros");
         return res.json();
       })
-      .then((data) => {
-        // Se sua API retorna um array direto ou um objeto com a chave records
-        setRecords(Array.isArray(data) ? data : (data.records || []));
-      })
-      .catch((err) => {
-        console.error("DEBUG ERRO DASHBOARD:", err);
-        setRecords([]);
-      })
+      .then((data) => setRecords(Array.isArray(data) ? data : (data.records || [])))
+      .catch(() => setRecords([]))
       .finally(() => setLoading(false));
   }, [selectedPatient?.id]);
 
-  const latest = records[0];
+  const latest = records.length > 0 ? records[0] : null;
 
   return (
     <div>
+      {/* Cabeçalho */}
       <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-bold flex items-center justify-center text-lg shadow-md shadow-blue-500/10">
@@ -78,33 +68,22 @@ export default function DashboardPage() {
             <h1 className="font-display text-2xl font-bold text-slate-800">
               {selectedPatient ? selectedPatient.name : "Selecione um paciente"}
             </h1>
-            <p className="text-xs font-medium text-slate-400 flex items-center gap-1.5 mt-0.5">
-              <span className={`inline-block h-2 w-2 rounded-full ${selectedPatient ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`}></span>
-              {selectedPatient ? `${selectedPatient.age} anos • ${selectedPatient.condition || "Sem quadro clínico"}` : "Nenhum paciente ativo"}
-            </p>
           </div>
         </div>
-        <Link 
-          href="/dashboard/registro" 
-          className="inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all"
-        >
-          <Plus className="mr-1.5 h-4 w-4 stroke-[3]" /> Novo registro
+        <Link href="/dashboard/registro" className="inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-lg">
+          <Plus className="mr-1.5 h-4 w-4" /> Novo registro
         </Link>
       </div>
 
       {!selectedPatient ? (
         <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-slate-300 mb-3" />
-          <h3 className="text-base font-bold text-slate-700">Nenhum paciente selecionado</h3>
         </div>
       ) : loading ? (
-        <div className="flex h-40 items-center justify-center text-sm font-medium text-slate-400 bg-white border border-dashed rounded-2xl">
-          Carregando dados...
-        </div>
+        <div className="p-12 text-center">Carregando...</div>
       ) : !latest ? (
         <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-slate-300 mb-3" />
-          <h3 className="text-base font-bold text-slate-700">Nenhum histórico encontrado</h3>
+          Nenhum histórico encontrado.
         </div>
       ) : (
         <div className="space-y-6">
@@ -116,7 +95,23 @@ export default function DashboardPage() {
             <Stat icon={Wind} label="Saturação" value={latest.oxygen || "N/A"} unit="%" tone="info" />
             <Stat icon={Smile} label="Humor" value={latest.mood || "N/A"} tone="success" />
           </div>
-          {/* ... restante do seu layout de cards abaixo ... */}
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="font-bold text-slate-800 mb-2">Mobilidade</h3>
+              <p className="text-sm">Estado: {latest.mobility}</p>
+              <p className="text-sm">Apoio: {latest.support_equipment}</p>
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="font-bold text-slate-800 mb-2">Nutrição</h3>
+              <p className="text-sm">Apetite: {latest.appetite}</p>
+              <p className="text-sm">Hídrica: {latest.water_intake}</p>
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="font-bold text-slate-800 mb-2">Estado Mental</h3>
+              <p className="text-sm">{latest.oriented ? "Orientado" : "Confuso"}</p>
+            </div>
+          </div>
         </div>
       )}
     </div>
