@@ -179,8 +179,21 @@ export default function PacientesPage() {
                     onClick={(e) => {
                       e.stopPropagation();
                       const url = `${window.location.origin}/share/${patient.id}`;
-                      navigator.clipboard.writeText(url);
-                      alert("Link de visualização copiado com sucesso!");
+                      const mensagem = `Assunto: Atualização sobre o acompanhamento do(a) Sr(a). ${patient.name} - Cuida Mais
+
+Olá! Tudo bem?
+Somos da Cuida Mais e estamos entrando em contato para compartilhar o relatório de acompanhamento atualizado do(a) Sr(a). ${patient.name}.
+
+Você pode acessar os dados e as informações sobre o cuidado diário através deste link seguro:
+${url}
+
+Este documento é parte do nosso compromisso com a transparência e permite que você acompanhe de perto toda a assistência que estamos oferecendo. Caso tenha qualquer dúvida sobre as informações contidas no link, nossa equipe está à inteira disposição.
+
+Atenciosamente,
+Equipe Cuida Mais`;
+                      
+                      navigator.clipboard.writeText(mensagem);
+                      alert("Mensagem e link do prontuário copiados com sucesso!");
                     }}
                     className="flex-1 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
                   >

@@ -62,7 +62,7 @@ export default function AuthPage() {
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/15 backdrop-blur">
               <HeartPulse className="h-5 w-5" />
             </span>
-            <span className="font-display text-lg font-bold">Projeto 30</span>
+            <span className="font-display text-lg font-bold">CUIDA+</span>
           </Link>
           <div className="max-w-md">
             <h1 className="font-display text-4xl font-bold leading-tight">
@@ -73,7 +73,7 @@ export default function AuthPage() {
               cliques. Tudo em um só lugar.
             </p>
           </div>
-          <p className="text-xs opacity-75">© {new Date().getFullYear()} Projeto 30</p>
+          <p className="text-xs opacity-75">© {new Date().getFullYear()} CUIDA+ — Cuidado conectado.</p>
         </div>
       </div>
 
@@ -84,8 +84,8 @@ export default function AuthPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-600 text-white">
               <HeartPulse className="h-5 w-5" />
             </span>
-            <span className="font-display text-lg font-bold">Projeto 30</span>
-          </Link>
+            <span className="font-display text-lg font-bold"></span>
+          </Link>Cuida+
 
           <h2 className="font-display text-2xl font-bold">
             {mode === "signin" ? "Bem-vindo de volta" : "Crie sua conta"}

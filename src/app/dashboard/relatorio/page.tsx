@@ -18,6 +18,35 @@ export default function RelatorioMedicoPage() {
       .finally(() => setLoading(false));
   }, []);
 
+ const handleEmail = () => {
+  if (!report) return;
+
+  // Acessamos o nome do paciente diretamente do seu objeto report
+  const nomePaciente = report.patientName; 
+  
+  const assunto = encodeURIComponent(`Relatório de Acompanhamento - ${nomePaciente} | Cuida Mais`);
+
+ const corpo = encodeURIComponent(
+`Prezado(a) colega, tudo bem?
+
+Esperamos que este e-mail o(a) encontre bem.
+
+Somos da Cuida Mais e, visando a continuidade e a excelência no cuidado domiciliar, compartilhamos o relatório clínico atualizado do(a) paciente ${nomePaciente}.
+
+Este documento consolida as métricas fisiológicas, intercorrências relevantes e a evolução das observações da nossa equipe de enfermagem no período recente. Acreditamos que estes dados sejam fundamentais para a sua análise clínica e para o ajuste terapêutico, caso necessário.
+
+Estamos à inteira disposição para discutir qualquer um dos pontos apresentados ou para fornecer detalhes adicionais sobre o prontuário.
+
+Atenciosamente,
+
+Equipe Cuida Mais
+Suporte Clínico e Monitoramento Domiciliar`
+  );
+
+  const url = `https://mail.google.com/mail/?view=cm&fs=1&su=${assunto}&body=${corpo}`;
+  window.open(url, '_blank');
+};
+
   const handlePrint = () => {
     if (typeof window !== "undefined") {
       window.print();
@@ -38,34 +67,42 @@ export default function RelatorioMedicoPage() {
       <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-16 text-center max-w-4xl mx-auto shadow-sm print:hidden">
         <FileText className="mx-auto h-10 w-10 text-slate-300 mb-4" />
         <h3 className="text-sm font-semibold text-slate-700">Sem dados para relatório</h3>
-        <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Insira registros diários para gerar o laudo de consolidation médica.</p>
+        <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Insira registros diários para gerar o laudo de consolidação médica.</p>
       </div>
     );
   }
 
   return (
-    
     <div className="max-w-4xl mx-auto space-y-6 p-4 sm:p-0 print:absolute print:top-0 print:left-0 print:w-full print:p-0 print:m-0">
       
-      {/* Topo - Menu de Ações (Ocultado 100% na impressão) */}
+      {/* Topo - Menu de Ações */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 print:hidden">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Relatório Consolidado</h1>
           <p className="text-xs text-slate-500 mt-1">Exportação de histórico clínico para suporte e tomadas de decisão médica.</p>
         </div>
-        <button 
-          onClick={handlePrint}
-          className="relative z-50 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-xs font-semibold text-white shadow-sm hover:bg-slate-800 transition-colors self-start sm:self-auto"
-        >
-          <Printer className="h-4 w-4" /> Imprimir / Salvar PDF
-        </button>
+        
+        <div className="flex gap-2 self-start sm:self-auto">
+          <button 
+  type="button" 
+  onClick={handleEmail}
+  className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 transition-colors cursor-pointer"
+>
+  <FileText className="h-4 w-4" /> Enviar por E-mail
+</button>
+          
+          <button 
+            onClick={handlePrint}
+            className="relative z-50 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-xs font-semibold text-white shadow-sm hover:bg-slate-800 transition-colors"
+          >
+            <Printer className="h-4 w-4" /> Imprimir / Salvar PDF
+          </button>
+        </div>
       </div>
 
       {/* ÁREA DA FOLHA DO LAUDO */}
-      {/* 2. CORRIGIDO: Classes 'print:border-0 print:shadow-none print:p-0 print:m-0' para limpar as bordas cinzas na folha */}
       <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm print:border-0 print:shadow-none print:p-0 print:m-0 print:bg-transparent">
         
-        {/* Cabeçalho do Laudo */}
         <div className="border-b border-slate-200 pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h2 className="text-md font-bold tracking-wider text-slate-900 uppercase">CUIDAMAIS • MONITORAMENTO DOMICILIAR</h2>
@@ -77,7 +114,6 @@ export default function RelatorioMedicoPage() {
           </div>
         </div>
 
-        {/* Dados do Paciente */}
         <div className="mt-6 bg-slate-50 p-5 rounded-xl border border-slate-100 grid gap-4 sm:grid-cols-2 text-xs print:bg-slate-50 print:border">
           <div className="space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Paciente</span>
@@ -89,14 +125,12 @@ export default function RelatorioMedicoPage() {
           </div>
         </div>
 
-        {/* Bloco 1: Médias Sinais Vitais */}
+        {/* Blocos de Dados (Mantidos conforme original) */}
         <div className="mt-8">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-4 border-b border-slate-100 pb-2 flex items-center gap-2">
             <HeartPulse className="h-4 w-4 text-slate-400 print:hidden" /> 1. Médias Clínicas Calculadas no Período
           </h3>
           <div className="grid gap-4 grid-cols-3 print:grid-cols-3">
-            
-            {/* Pressão Arterial */}
             <div className="p-4 rounded-xl border border-slate-100 bg-white flex items-center gap-3.5 shadow-sm print:border print:shadow-none">
               <span className="p-2 bg-slate-50 text-slate-700 rounded-lg border border-slate-100 print:hidden"><HeartPulse className="h-4 w-4" /></span>
               <div>
@@ -104,8 +138,6 @@ export default function RelatorioMedicoPage() {
                 <strong className="text-slate-800 text-md font-bold tracking-tight">{report.metrics.avgBloodPressure} <span className="text-[10px] text-slate-400 font-normal">mmHg</span></strong>
               </div>
             </div>
-
-            {/* Glicemia */}
             <div className="p-4 rounded-xl border border-slate-100 bg-white flex items-center gap-3.5 shadow-sm print:border print:shadow-none">
               <span className="p-2 bg-slate-50 text-slate-700 rounded-lg border border-slate-100 print:hidden"><Droplets className="h-4 w-4" /></span>
               <div>
@@ -113,8 +145,6 @@ export default function RelatorioMedicoPage() {
                 <strong className="text-slate-800 text-md font-bold tracking-tight">{report.metrics.avgGlucose} <span className="text-[10px] text-slate-400 font-normal">mg/dL</span></strong>
               </div>
             </div>
-
-            {/* Temperatura */}
             <div className="p-4 rounded-xl border border-slate-100 bg-white flex items-center gap-3.5 shadow-sm print:border print:shadow-none">
               <span className="p-2 bg-slate-50 text-slate-700 rounded-lg border border-slate-100 print:hidden"><Thermometer className="h-4 w-4" /></span>
               <div>
@@ -122,42 +152,35 @@ export default function RelatorioMedicoPage() {
                 <strong className="text-slate-800 text-md font-bold tracking-tight">{report.metrics.avgTemperature} <span className="text-[10px] text-slate-400 font-normal">°C</span></strong>
               </div>
             </div>
-
           </div>
         </div>
 
-        {/* Bloco 2: Mapeamento de Intercorrências */}
         <div className="mt-8">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-4 border-b border-slate-100 pb-2 flex items-center gap-2">
             <ShieldAlert className="h-4 w-4 text-slate-400 print:hidden" /> 2. Sumário de Eventos Críticos e Queixas
           </h3>
           <div className="grid gap-3 grid-cols-3 print:grid-cols-3 text-xs text-slate-600">
-            
             <div className="p-3.5 rounded-xl bg-white border border-slate-100 flex justify-between items-center shadow-sm print:border print:shadow-none">
               <span className="font-medium">Registros de Quedas</span>
               <span className={`font-semibold px-2 py-0.5 rounded-md text-[11px] ${report.intercurrences.falls > 0 ? "bg-red-50 text-red-700 border border-red-100" : "bg-slate-50 text-slate-600 border border-slate-100"}`}>
                 {report.intercurrences.falls}
               </span>
             </div>
-
             <div className="p-3.5 rounded-xl bg-white border border-slate-100 flex justify-between items-center shadow-sm print:border print:shadow-none">
               <span className="font-medium">Episódios Confusão</span>
               <span className={`font-semibold px-2 py-0.5 rounded-md text-[11px] ${report.intercurrences.confusion > 0 ? "bg-amber-50 text-amber-700 border border-amber-100" : "bg-slate-50 text-slate-600 border border-slate-100"}`}>
                 {report.intercurrences.confusion}
               </span>
             </div>
-
             <div className="p-3.5 rounded-xl bg-white border border-slate-100 flex justify-between items-center shadow-sm print:border print:shadow-none">
               <span className="font-medium">Edema/Inchaço Membros</span>
               <span className="font-semibold px-2 py-0.5 rounded-md text-[11px] bg-slate-50 text-slate-600 border border-slate-100">
                 {report.intercurrences.edema}
               </span>
             </div>
-
           </div>
         </div>
 
-        {/* Bloco 3: Últimas Evoluções Descritivas */}
         <div className="mt-8">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-4 border-b border-slate-100 pb-2 flex items-center gap-2">
             <FileClock className="h-4 w-4 text-slate-400 print:hidden" /> 3. Últimas Evoluções Narrativas do Prontuário
@@ -172,12 +195,10 @@ export default function RelatorioMedicoPage() {
           </div>
         </div>
 
-        {/* Espaço para Carimbo / Assinatura do Médico */}
         <div className="mt-16 pt-6 border-t border-dashed border-slate-200 text-center max-w-xs mx-auto text-[11px] text-slate-400 block">
           <div className="h-px bg-slate-300 w-full mb-3"></div>
           <span className="tracking-wide">Assinatura / Carimbo do Profissional Médico</span>
         </div>
-
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ function Brand() {
         <HeartPulse className="h-5 w-5" />
       </span>
       <div className="leading-tight">
-        <p className="font-display text-base font-bold">Projeto 30</p>
+        <p className="font-display text-base font-bold">CUIDA+</p>
         <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Healthtech</p>
       </div>
     </Link>

@@ -49,7 +49,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             <HeartPulse className="h-5 w-5" />
           </div>
           <div>
-            <span className="font-display text-base font-bold block leading-none">Projeto 30</span>
+            <span className="font-display text-base font-bold block leading-none">CUIDA+</span>
             <span className="text-[10px] text-slate-400 font-medium tracking-wider uppercase">HealthTech</span>
           </div>
         </div>

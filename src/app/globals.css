@@ -1,11 +1,5 @@
 @import "tailwindcss";
 
-/*
- * Projeto 30 — Healthtech design system
- * Palette: white predominant, soft medical blue, health green, light grey.
- * Tokens defined in oklch. Dark mode is deep navy with elevated cards.
- */
-
 @theme inline {
   --font-sans: "Inter", "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Plus Jakarta Sans", "Inter", sans-serif;

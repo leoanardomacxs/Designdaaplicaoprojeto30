@@ -28,7 +28,7 @@ function Nav() {
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-linear-to-r from-blue-600 to-emerald-500 text-primary-foreground shadow-soft">
             <HeartPulse className="h-5 w-5" />
           </span>
-          <span className="font-display text-lg font-bold">Projeto 30</span>
+          <span className="font-display text-lg font-bold">CUIDA+</span>
         </Link>
         <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
           <a href="#funcionalidades" className="hover:text-foreground">
@@ -381,7 +381,7 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-sm text-muted-foreground lg:flex-row lg:px-8">
           <div className="flex items-center gap-2">
             <HeartPulse className="h-4 w-4 text-blue-600" />
-            <span>© {new Date().getFullYear()} Projeto 30 — Cuidado conectado.</span>
+            <span>© {new Date().getFullYear()} CUIDA+ — Cuidado conectado.</span>
           </div>
           <div className="flex gap-4">
             <a href="#" className="hover:text-foreground">
