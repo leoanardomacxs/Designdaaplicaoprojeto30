@@ -1,3 +1,4 @@
+//representa a Página de Perfil e Histórico Médico do paciente
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Activity, Heart, Thermometer, Droplets, Calendar, User, Info } from "lucide-react";

@@ -17,3 +17,5 @@ yarn-error.log*
 # prisma
 prisma/dev.db
 prisma/dev.db-journal
+
+repomix-output.xml

@@ -1,3 +1,4 @@
+//painel de controle principal do dashboard, interface onde o usuário pode visualizar, adicionar, deletar, selecionar e compartilhar prontuários de idosos assistidos.
 "use client";
 
 import React, { useEffect, useState } from "react";

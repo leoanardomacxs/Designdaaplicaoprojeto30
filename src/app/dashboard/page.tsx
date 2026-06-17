@@ -1,3 +1,4 @@
+//Painel principal do dashboard, interface onde o usuário pode visualizar o resumo dos paraemnteros clinicos recentes
 "use client";
 
 import { useState, useEffect } from "react";
@@ -37,28 +38,28 @@ export default function DashboardPage() {
   const { selectedPatient } = usePatient();
 
   useEffect(() => {
-  if (!selectedPatient?.id) {
-    setRecords([]);
-    setLoading(false);
-    return;
-  }
-
-  setLoading(true);
-  
-  fetch(`/api/dashboard/records/patients/${selectedPatient.id}`)
-    .then(async (res) => {
-      if (!res.ok) throw new Error("Erro ao buscar registros");
-      return res.json();
-    })
-    .then((data) => {
-      setRecords(data.records || []);
-    })
-    .catch((err) => {
-      console.error(err);
+    if (!selectedPatient?.id) {
       setRecords([]);
-    })
-    .finally(() => setLoading(false));
-}, [selectedPatient?.id]); 
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    
+    fetch(`/api/dashboard/records/patients/${selectedPatient.id}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Erro ao buscar registros");
+        return res.json();
+      })
+      .then((data) => {
+        setRecords(data.records || []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setRecords([]);
+      })
+      .finally(() => setLoading(false));
+  }, [selectedPatient?.id]); 
 
   const latest = records.length > 0 ? records[0] : null;
 
@@ -68,11 +69,12 @@ export default function DashboardPage() {
       <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-bold flex items-center justify-center text-lg shadow-md shadow-blue-500/10">
-            {selectedPatient ? selectedPatient.name.substring(0, 2).toUpperCase() : "??"}
+            {/* CORREÇÃO AQUI: adicionado ?. para evitar quebra de string nula */}
+            {selectedPatient?.name ? selectedPatient.name.substring(0, 2).toUpperCase() : "??"}
           </div>
           <div>
             <h1 className="font-display text-2xl font-bold text-slate-800">
-              {selectedPatient ? selectedPatient.name : "Selecione um paciente"}
+              {selectedPatient?.name ? selectedPatient.name : "Selecione um paciente"}
             </h1>
           </div>
         </div>
@@ -84,12 +86,13 @@ export default function DashboardPage() {
       {!selectedPatient ? (
         <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-slate-300 mb-3" />
+          <p className="text-slate-500 text-sm">Nenhum paciente selecionado no menu.</p>
         </div>
       ) : loading ? (
-        <div className="p-12 text-center">Carregando...</div>
+        <div className="p-12 text-center text-slate-500">Carregando dados médicos...</div>
       ) : !latest ? (
-        <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">
-          Nenhum histórico encontrado.
+        <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center text-slate-500">
+          Nenhum histórico encontrado para este paciente. Cadastre um novo registro!
         </div>
       ) : (
         <div className="space-y-6">
@@ -105,17 +108,17 @@ export default function DashboardPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
               <h3 className="font-bold text-slate-800 mb-2">Mobilidade</h3>
-              <p className="text-sm">Estado: {latest.mobility}</p>
-              <p className="text-sm">Apoio: {latest.support_equipment}</p>
+              <p className="text-sm text-slate-600">Estado: {latest.mobility || "N/A"}</p>
+              <p className="text-sm text-slate-600">Apoio: {latest.support_equipment || "N/A"}</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
               <h3 className="font-bold text-slate-800 mb-2">Nutrição</h3>
-              <p className="text-sm">Apetite: {latest.appetite}</p>
-              <p className="text-sm">Hídrica: {latest.water_intake}</p>
+              <p className="text-sm text-slate-600">Apetite: {latest.appetite || "N/A"}</p>
+              <p className="text-sm text-slate-600">Hídrica: {latest.water_intake || "N/A"}</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
               <h3 className="font-bold text-slate-800 mb-2">Estado Mental</h3>
-              <p className="text-sm">{latest.oriented ? "Orientado" : "Confuso"}</p>
+              <p className="text-sm text-slate-600">{latest.oriented ? "Orientado" : "Confuso"}</p>
             </div>
           </div>
         </div>

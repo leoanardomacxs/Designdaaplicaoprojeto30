@@ -1,3 +1,4 @@
+//É a vitrine pública do seu site. Quem digita apenas cuidamais.com cai nela.
 "use client";
 
 import {
@@ -19,6 +20,7 @@ import {
 import { useState } from "react";
 import Link from "next/link"; 
 
+//Cria a barra de menu superior.
 function Nav() {
   const [open, setOpen] = useState(false);
   return (
@@ -85,6 +87,7 @@ function Nav() {
   );
 }
 
+//evitar repetição de código
 function Section({
   id,
   children,
@@ -101,6 +104,7 @@ function Section({
   );
 }
 
+//HTML seção principal
 export default function LandingPage() {
   return (
     <div className="min-h-dvh bg-background">

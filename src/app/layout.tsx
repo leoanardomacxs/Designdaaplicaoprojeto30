@@ -1,3 +1,4 @@
+//Ele prepara o terreno do HTML
 import "./globals.css";
 
 export const metadata = {

@@ -1,3 +1,4 @@
+//faz a gestão do estado global do paciente selecionado, permitindo que diferentes componentes acessem e atualizem as informações do paciente de forma consistente em toda a aplicação. Ele também persiste o paciente selecionado no localStorage para sobreviver a recarregamentos de página (F5).
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';

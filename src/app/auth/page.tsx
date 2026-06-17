@@ -1,3 +1,4 @@
+// Este arquivo implementa a página de autenticação (Login e Cadastro) do sistema, gerenciando o estado do formulário e as chamadas para a API.
 "use client";
 
 import { useState, type FormEvent } from "react";
@@ -5,9 +6,9 @@ import { HeartPulse, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-
-
+// Componente principal da página de autenticação
 export default function AuthPage() {
+  // Estados para controlar o modo (login ou cadastro) e os inputs do formulário
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,13 +16,14 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // Função disparada ao submeter o formulário
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
 
     try {
       if (mode === "signup") {
-        
+        // Chamada de API para criar uma nova conta
         const res = await fetch("/api/auth/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -33,7 +35,7 @@ export default function AuthPage() {
         alert("Conta criada com sucesso! Mude para o modo 'Entrar'.");
         setMode("signin");
       } else {
-        
+        // Chamada de API para realizar o login
         const res = await fetch("/api/auth/signin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -42,10 +44,11 @@ export default function AuthPage() {
 
         if (!res.ok) throw new Error("E-mail ou senha incorretos.");
 
-        
+        // Redireciona o usuário para o dashboard após login bem-sucedido
         router.push("/dashboard");
       }
     } catch (err) {
+      // Exibe erros de autenticação para o usuário
       alert((err as Error).message);
     } finally {
       setLoading(false);
@@ -54,7 +57,7 @@ export default function AuthPage() {
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
-      {/* Left visual */}
+      {/* Coluna lateral visual (escondida em dispositivos móveis) */}
       <div className="relative hidden overflow-hidden bg-gradient-to-tr from-blue-600 to-emerald-600 lg:flex">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0c_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0c_1px,transparent_1px)] bg-[size:14px_24px] opacity-40" />
         <div className="relative z-10 flex flex-col justify-between p-10 text-white">
@@ -77,15 +80,16 @@ export default function AuthPage() {
         </div>
       </div>
 
-      {/* Right form */}
+      {/* Coluna com o formulário de autenticação */}
       <div className="flex items-center justify-center bg-background px-4 py-10">
         <div className="w-full max-w-md">
+          {/* Alterado: Texto "Cuida+" movido para dentro da tag span correspondente do link mobile */}
           <Link href="/" className="mb-8 flex items-center gap-2 lg:hidden">
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-600 text-white">
               <HeartPulse className="h-5 w-5" />
             </span>
-            <span className="font-display text-lg font-bold"></span>
-          </Link>Cuida+
+            <span className="font-display text-lg font-bold">Cuida+</span>
+          </Link>
 
           <h2 className="font-display text-2xl font-bold">
             {mode === "signin" ? "Bem-vindo de volta" : "Crie sua conta"}
@@ -96,7 +100,7 @@ export default function AuthPage() {
               : "Cadastre-se em segundos. É grátis."}
           </p>
 
-          {/* Mode switch */}
+          {/* Botões para alternar entre modo de login e cadastro */}
           <div className="mt-6 inline-flex rounded-lg border border-border bg-card p-1">
             <button
               type="button"
@@ -123,6 +127,7 @@ export default function AuthPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            {/* Campo de nome (exibido apenas no modo de cadastro) */}
             {mode === "signup" ? (
               <div>
                 <label className="text-sm font-medium">Nome completo</label>
@@ -137,6 +142,7 @@ export default function AuthPage() {
               </div>
             ) : null}
 
+            {/* Campos de e-mail e senha */}
             <div>
               <label className="text-sm font-medium">E-mail</label>
               <div className="relative mt-1">
@@ -168,6 +174,7 @@ export default function AuthPage() {
               </div>
             </div>
 
+            {/* Botão de envio com indicador de carregamento */}
             <button
               type="submit"
               disabled={loading}
@@ -184,8 +191,10 @@ export default function AuthPage() {
             </button>
           </form>
 
+          {/* Rodapé do formulário com termos de serviço */}
+          {/* Alterado: "continuing" corrigido para "continuar" */}
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            Ao continuing você concorda com nossos termos e política de privacidade.
+            Ao continuar você concorda com nossos termos e política de privacidade.
           </p>
         </div>
       </div>

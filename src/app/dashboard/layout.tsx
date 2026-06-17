@@ -1,3 +1,4 @@
+//Layout Principal do painel de controle, barra lateral também
 "use client";
 
 import React from "react";

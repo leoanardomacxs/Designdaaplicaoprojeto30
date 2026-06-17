@@ -1,14 +1,28 @@
+// Geração e visualização de relatórios médicos
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FileText, Printer, HeartPulse, Droplets, Thermometer, ShieldAlert, FileClock, Loader2 } from "lucide-react";
+import { usePatient } from "@/context/PatientContext"; 
+import { FileText, Printer, HeartPulse, Droplets, Thermometer, ShieldAlert, FileClock, Loader2, UserCheck } from "lucide-react";
 
 export default function RelatorioMedicoPage() {
+  // Ajuste aqui: Pegamos o contexto como 'any' para o TypeScript não reclamar,
+  // e testamos as propriedades mais prováveis que o seu contexto usa (como 'patient')
+ const { selectedPatient } = usePatient();
+ const patientId = selectedPatient?.id;
+
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/dashboard/records/report')
+    // Se não houver patientId, cancela o loading e deixa o estado vazio para tratar na renderização
+    if (!patientId) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    fetch(`/api/dashboard/records/report?patientId=${patientId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Erro na requisição");
         return res.json();
@@ -16,17 +30,17 @@ export default function RelatorioMedicoPage() {
       .then((data) => setReport(data))
       .catch((err) => console.error("Erro ao carregar relatório:", err))
       .finally(() => setLoading(false));
-  }, []);
+  }, [patientId]);
 
- const handleEmail = () => {
-  if (!report) return;
+  const handleEmail = () => {
+    if (!report) return;
 
-  // Acessamos o nome do paciente diretamente do seu objeto report
-  const nomePaciente = report.patientName; 
-  
-  const assunto = encodeURIComponent(`Relatório de Acompanhamento - ${nomePaciente} | Cuida Mais`);
+    // Acessamos o nome do paciente diretamente do seu objeto report
+    const nomePaciente = report.patientName; 
+    
+    const assunto = encodeURIComponent(`Relatório de Acompanhamento - ${nomePaciente} | Cuida Mais`);
 
- const corpo = encodeURIComponent(
+    const corpo = encodeURIComponent(
 `Prezado(a) colega, tudo bem?
 
 Esperamos que este e-mail o(a) encontre bem.
@@ -41,11 +55,11 @@ Atenciosamente,
 
 Equipe Cuida Mais
 Suporte Clínico e Monitoramento Domiciliar`
-  );
+    );
 
-  const url = `https://mail.google.com/mail/?view=cm&fs=1&su=${assunto}&body=${corpo}`;
-  window.open(url, '_blank');
-};
+    const url = `https://mail.google.com/mail/?view=cm&fs=1&su=${assunto}&body=${corpo}`;
+    window.open(url, '_blank');
+  };
 
   const handlePrint = () => {
     if (typeof window !== "undefined") {
@@ -53,6 +67,7 @@ Suporte Clínico e Monitoramento Domiciliar`
     }
   };
 
+  // 1. Estado de Carregamento
   if (loading) {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-3 text-sm font-medium text-slate-500 bg-white border border-slate-100 rounded-2xl max-w-4xl mx-auto shadow-sm print:hidden">
@@ -62,6 +77,18 @@ Suporte Clínico e Monitoramento Domiciliar`
     );
   }
 
+  // 2. Estado de Erro: Contexto não possui um paciente ativo
+  if (!patientId) {
+    return (
+      <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-16 text-center max-w-4xl mx-auto shadow-sm print:hidden">
+        <UserCheck className="mx-auto h-10 w-10 text-slate-300 mb-4" />
+        <h3 className="text-sm font-semibold text-slate-700">Nenhum paciente selecionado</h3>
+        <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Por favor, selecione um paciente no painel lateral para visualizar o relatório.</p>
+      </div>
+    );
+  }
+
+  // 3. Estado de Erro: Rota retornou vazio ou sem registros
   if (!report || report.empty) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-16 text-center max-w-4xl mx-auto shadow-sm print:hidden">
@@ -84,12 +111,12 @@ Suporte Clínico e Monitoramento Domiciliar`
         
         <div className="flex gap-2 self-start sm:self-auto">
           <button 
-  type="button" 
-  onClick={handleEmail}
-  className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 transition-colors cursor-pointer"
->
-  <FileText className="h-4 w-4" /> Enviar por E-mail
-</button>
+            type="button" 
+            onClick={handleEmail}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 transition-colors cursor-pointer"
+          >
+            <FileText className="h-4 w-4" /> Enviar por E-mail
+          </button>
           
           <button 
             onClick={handlePrint}
@@ -125,7 +152,7 @@ Suporte Clínico e Monitoramento Domiciliar`
           </div>
         </div>
 
-        {/* Blocos de Dados (Mantidos conforme original) */}
+        {/* Blocos de Dados */}
         <div className="mt-8">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-4 border-b border-slate-100 pb-2 flex items-center gap-2">
             <HeartPulse className="h-4 w-4 text-slate-400 print:hidden" /> 1. Médias Clínicas Calculadas no Período

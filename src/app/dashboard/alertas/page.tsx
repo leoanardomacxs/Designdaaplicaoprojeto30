@@ -1,3 +1,4 @@
+//Tela de triagem de alertas clínicos
 "use client";
 
 import React, { useEffect, useState } from "react";

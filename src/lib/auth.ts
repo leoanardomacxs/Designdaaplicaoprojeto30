@@ -2,9 +2,12 @@ import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? "segredo-temporario-projeto30-12345"
-);
+// Validação estrita da variável de ambiente essencial para a segurança
+if (!process.env.JWT_SECRET) {
+  throw new Error("ERRO CRÍTICO: A variável de ambiente JWT_SECRET não está configurada.");
+}
+
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function hashPassword(password: string) {
   return bcrypt.hash(password, 10);

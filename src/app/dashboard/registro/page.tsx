@@ -1,3 +1,4 @@
+//página de Registro Diário (Evolução Clínica)
 "use client";
 
 import { usePatient } from "@/context/PatientContext";
