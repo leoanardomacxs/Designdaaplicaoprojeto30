@@ -1,4 +1,5 @@
 // Este arquivo gerencia as operações de busca detalhada (GET) e exclusão (DELETE) de um paciente específico pelo seu ID.
+//Gerencia um paciente por vez 
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireSession } from "@/lib/auth";

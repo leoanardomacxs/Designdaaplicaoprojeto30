@@ -1,3 +1,5 @@
+//garante que apenas uma instância da conexão com o banco seja criada
+//pra n fuder tudo
 import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };

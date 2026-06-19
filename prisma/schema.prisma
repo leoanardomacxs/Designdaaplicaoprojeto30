@@ -1,12 +1,15 @@
+//instruções do banco de dados
 generator client {
   provider = "prisma-client-js"
 }
 
+// Configuração da conexão com o banco
 datasource db {
   provider = "sqlite"
   url      = "file:./database.db"
 }
 
+// Modelo que representa os usuários do sistema
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -14,9 +17,10 @@ model User {
   name      String
   role      String   @default("admin") 
   createdAt DateTime @default(now())
-  patients  Patient[]
+  patients  Patient[] // Relação: Um usuário pode ter vários pacientes cadastrados
 }
 
+// Modelo que representa os pacientes
 model Patient {
   id        String   @id @default(cuid())
   name      String
@@ -25,59 +29,61 @@ model Patient {
   condition String?  
   ownerId   String
   createdAt DateTime @default(now())
-  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  records   Record[]
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade) // Relação com o User que o cadastrou
+  records   Record[] // Relação: Um paciente pode ter vários registros diários/evoluções
 }
 
+// Modelo que armazena os registros diários e evolução clínica do paciente
 model Record {
   id        String   @id @default(uuid())
   patientId String
-  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade) // Relação com o Paciente correspondente
   createdAt DateTime @default(now()) 
 
-  
-  systolic              Int?     
-  diastolic             Int?     
-  glucose               Int?     
-  heart_rate            Int?     
-  oxygen                Int?     
-  temperature           Float?   
+  // Sinais Vitais e Métricas Fisiológicas
+  systolic             Int?     
+  diastolic            Int?     
+  glucose              Int?     
+  heart_rate           Int?     
+  oxygen               Int?     
+  temperature          Float?   
 
-  
-  weight                Float?   
-  pain_level            Int?     
-  pain_location         String?  
-  fatigue               Boolean  @default(false) 
-  dizziness             Boolean  @default(false) 
-  edema                 Boolean  @default(false) 
+  // Sintomas Físicos e Queixas Comuns
+  weight               Float?   
+  pain_level           Int?     
+  pain_location        String?  
+  fatigue              Boolean  @default(false) 
+  dizziness            Boolean  @default(false) 
+  edema                Boolean  @default(false) 
 
-  
-  mobility              String   @default("Independente") 
-  recent_falls          Boolean  @default(false)          
-  difficulty_standing   Boolean  @default(false)          
-  support_equipment     String?  
+  // Mobilidade e Segurança
+  mobility             String   @default("Independente") 
+  recent_falls         Boolean  @default(false)          
+  difficulty_standing  Boolean  @default(false)          
+  support_equipment    String?  
 
-  
-  oriented              Boolean  @default(true)  
-  mental_confusion      Boolean  @default(false) 
-  excessive_sleepiness  Boolean  @default(false) 
-  speech_alteration     Boolean  @default(false) 
+  // Estado Cognitivo e Neurológico
+  oriented             Boolean  @default(true)  
+  mental_confusion     Boolean  @default(false) 
+  excessive_sleepiness Boolean  @default(false) 
+  speech_alteration    Boolean  @default(false) 
 
-  
-  appetite              String   @default("Normal") 
-  food_intake           String   @default("Total")  
-  water_intake          String   @default("Adequada") 
+  // Nutrição e Hidratação
+  appetite             String   @default("Normal") 
+  food_intake          String   @default("Total")  
+  water_intake         String   @default("Adequada") 
   difficulty_swallowing Boolean  @default(false)      
 
-  
-  urine                 String   @default("Normal") 
-  feces                 String   @default("Normal") 
-  incontinence          String   @default("Nenhuma") 
+  // Eliminações Fisiológicas
+  urine                String   @default("Normal") 
+  feces                String   @default("Normal") 
+  incontinence         String   @default("Nenhuma") 
 
-  
-  mood                  String   @default("Estável") 
-  activity_interest     Boolean  @default(true)     
-  sleep_quality         String   @default("Normal") 
+  // Bem-estar Emocional e Sono
+  mood                 String   @default("Estável") 
+  activity_interest    Boolean  @default(true)     
+  sleep_quality        String   @default("Normal") 
 
-  notes                 String?  
+  // Observações gerais e anotações de enfermagem
+  notes                String?  
 } 

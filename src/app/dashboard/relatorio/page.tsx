@@ -1,4 +1,4 @@
-// Geração e visualização de relatórios médicos
+// Geração e visualização de relatórios médicos para imprimir e mandar por email
 "use client";
 
 import React, { useEffect, useState } from "react";

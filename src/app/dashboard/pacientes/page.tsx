@@ -1,4 +1,5 @@
 //painel de controle principal do dashboard, interface onde o usuário pode visualizar, adicionar, deletar, selecionar e compartilhar prontuários de idosos assistidos.
+//possue também a função de criar link de compartilhamento do prontuário para familiares
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -6,16 +7,20 @@ import { Users, UserPlus, Calendar, Activity, X, UserCheck, Trash2 } from "lucid
 import { usePatient } from "@/context/PatientContext"; 
 
 export default function PacientesPage() {
+  // Estados da lista, carregamento e controle do modal
   const [patients, setPatients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   
+  // Formulário de cadastro e estados de envio
   const [newPatient, setNewPatient] = useState({ name: "", age: "", condition: "" });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  // Contexto para gerenciar qual idoso está selecionado no sistema
   const { selectedPatient, selectPatient } = usePatient();
 
+  // Busca os pacientes cadastrados na API
   const loadPatients = () => {
     setLoading(true);
     setError("");
@@ -34,10 +39,12 @@ export default function PacientesPage() {
       .finally(() => setLoading(false));
   };
 
+  // Carrega a lista assim que o componente entra na tela
   useEffect(() => {
     loadPatients();
   }, []);
 
+  // Deleta o paciente após confirmação do usuário
   const handleDelete = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.")) return;
 
@@ -53,6 +60,7 @@ export default function PacientesPage() {
     }
   };
 
+  // Envia os dados do novo paciente para o backend
   const handleCreatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -77,6 +85,7 @@ export default function PacientesPage() {
         setNewPatient({ name: "", age: "", condition: "" });
         loadPatients(); 
         
+        // Se for o primeiro paciente cadastrado, já deixa ele ativo por padrão
         if (patients.length === 0 && responseData) {
           selectPatient({
             id: responseData.id,
@@ -98,6 +107,7 @@ export default function PacientesPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      {/* Cabeçalho da página e botão de novo cadastro */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-800">Meus Idosos Assistidos</h1>
@@ -111,12 +121,14 @@ export default function PacientesPage() {
         </button>
       </div>
 
+      {/* Erros gerais da listagem */}
       {error && !showModal && (
         <div className="p-4 rounded-xl text-sm font-semibold border bg-rose-50 text-rose-700 border-rose-200">
           {error}
         </div>
       )}
 
+      {/* Renderização condicional: Loading -> Vazio -> Listagem de Cards */}
       {loading ? (
         <div className="flex h-40 items-center justify-center text-sm font-medium text-slate-400 bg-white border border-dashed rounded-2xl">
           Mapeando rede de pacientes vinculados...
@@ -131,6 +143,7 @@ export default function PacientesPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {patients.map((patient) => {
             const isSelected = selectedPatient?.id === patient.id;
+            // Pega as duas primeiras letras do nome para o avatar
             const initials = patient.name
               ? patient.name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase()
               : "ID";
@@ -175,15 +188,16 @@ export default function PacientesPage() {
                   </div>
                 </div>
 
+                {/* Botões de Ação do Card: Copiar mensagem customizada ou Excluir */}
                 <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
                   <button 
                     onClick={(e) => {
-                      e.stopPropagation();
+                      e.stopPropagation(); // Evita ativar o card ao clicar no botão
                       const url = `${window.location.origin}/share/${patient.id}`;
                       const mensagem = `Assunto: Atualização sobre o acompanhamento do(a) Sr(a). ${patient.name} - Cuida Mais
 
 Olá! Tudo bem?
-Somos da Cuida Mais e estamos entrando em contato para compartilhar o relatório de acompanhamento atualizado do(a) Sr(a). ${patient.name}.
+Somos da Cuida Mais e estamos entrando em contato para compartilhar o relatório de acompanhamento updated do(a) Sr(a). ${patient.name}.
 
 Você pode acessar os dados e as informações sobre o cuidado diário através deste link seguro:
 ${url}
@@ -202,7 +216,7 @@ Equipe Cuida Mais`;
                   </button>
                   <button 
                     onClick={(e) => {
-                      e.stopPropagation();
+                      e.stopPropagation(); // Evita ativar o card ao deletar
                       handleDelete(patient.id);
                     }}
                     className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
@@ -216,6 +230,7 @@ Equipe Cuida Mais`;
         </div>
       )}
 
+      {/* Modal de cadastro de novo idoso */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden">

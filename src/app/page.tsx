@@ -1,4 +1,4 @@
-//É a vitrine pública do seu site. Quem digita apenas cuidamais.com cai nela.
+//É a vitrine pública do site. Quem digita apenas cuidamais.com cai nela. 
 "use client";
 
 import {

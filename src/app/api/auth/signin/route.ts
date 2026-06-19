@@ -1,4 +1,4 @@
-//recebe os dados, busca no banco, valida, cria a sessão e retorna os dados
+//Rotas de login
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { comparePassword, signToken } from "@/lib/auth";

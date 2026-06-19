@@ -1,3 +1,4 @@
+//Este arquivo não cuida de dados de saúde, mas cuida de quem pode acessar esses dados.
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";

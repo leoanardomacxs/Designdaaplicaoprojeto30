@@ -1,4 +1,4 @@
-//faz a gestão do estado global do paciente selecionado, permitindo que diferentes componentes acessem e atualizem as informações do paciente de forma consistente em toda a aplicação. Ele também persiste o paciente selecionado no localStorage para sobreviver a recarregamentos de página (F5).
+// O contexto serve para o site todo saber qual paciente estamos olhando agora
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -18,9 +18,10 @@ interface PatientContextType {
 const PatientContext = createContext<PatientContextType | undefined>(undefined);
 
 export function PatientProvider({ children }: { children: React.ReactNode }) {
+  // Estado que guarda o paciente que está selecionado
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
-  
+  // Quando abre o site, tenta pegar o paciente salvo no navegador
   useEffect(() => {
     const saved = localStorage.getItem('selectedPatient');
     if (saved) {
@@ -28,6 +29,7 @@ export function PatientProvider({ children }: { children: React.ReactNode }) {
     }
   }, []); 
 
+  // Salva o paciente escolhido tanto no estado quanto no navegador
   const selectPatient = (patient: Patient) => {
     setSelectedPatient(patient);
     localStorage.setItem('selectedPatient', JSON.stringify(patient));
@@ -40,6 +42,7 @@ export function PatientProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Hook para facilitar o uso em qualquer parte do sistema
 export function usePatient() {
   const context = useContext(PatientContext);
   if (!context) {

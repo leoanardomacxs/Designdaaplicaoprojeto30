@@ -1,3 +1,4 @@
+//apagar conta de usuário de forma segura
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 

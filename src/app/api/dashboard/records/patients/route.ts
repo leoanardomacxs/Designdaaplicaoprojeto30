@@ -1,4 +1,5 @@
 // Este arquivo gerencia a criação de novos pacientes (POST) e a listagem de todos os pacientes do usuário logado (GET).
+//gerencia a lista inteira de pacientes do usuário
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth"; 

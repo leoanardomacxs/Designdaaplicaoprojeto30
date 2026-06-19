@@ -1,4 +1,4 @@
-// Este arquivo implementa a página de autenticação (Login e Cadastro) do sistema, gerenciando o estado do formulário e as chamadas para a API.
+// Tela de login e Cadastro, alterna entre dois modos, criar conta e fazer login
 "use client";
 
 import { useState, type FormEvent } from "react";
